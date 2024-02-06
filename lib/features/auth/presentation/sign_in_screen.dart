@@ -1,42 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rakshny/features/home/presentation/home.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:animate_do/animate_do.dart';
 
-class SignInPage extends StatelessWidget {
+class SignInPage extends GetView<SignInController> {
   const SignInPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    SignInController controller = Get.find(tag: 'SignInController');
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: Text("Login"),
-    //   ),
-    //   body: Column(children: [
-    //     Padding(
-    //       padding: const EdgeInsets.all(16.0),
-    //       child: ReactiveForm(
-    //           formGroup: controller.form,
-    //           child: Column(
-    //             children: [
-    //               ReactiveTextField(
-    //                 formControlName: 'username',
-    //                 decoration: const InputDecoration(
-    //                     label: Text('Username'), hintText: 'user'),
-    //               ),
-    //               const SizedBox(height: 10),
-    //               ReactiveTextField(
-    //                 formControlName: 'password',
-    //                 decoration: const InputDecoration(
-    //                     label: Text('Password'), hintText: 'Password'),
-    //               ),
-    //               const SizedBox(height: 10),
-    //             ],
-    //           )),
-    //     )
-    //   ]),
-    // );
+    // SignInController controller = Get.find(tag: 'SignInController');
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       extendBody: true,
@@ -45,9 +19,9 @@ class SignInPage extends StatelessWidget {
           width: double.infinity,
           decoration: BoxDecoration(
               gradient: LinearGradient(begin: Alignment.topCenter, colors: [
-            Colors.orange.shade900,
-            Colors.orange.shade800,
-            Colors.orange.shade400
+            Colors.blue.shade900,
+            Colors.blue.shade800,
+            Colors.blue.shade400
           ])),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,75 +67,84 @@ class SignInPage extends StatelessWidget {
                         height: 60,
                       ),
                       FadeInUp(
-                          duration: const Duration(milliseconds: 1400),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: const [
-                                  BoxShadow(
-                                      color: Color.fromRGBO(225, 95, 27, .3),
-                                      blurRadius: 20,
-                                      offset: Offset(0, 10))
-                                ]),
-                            child: ReactiveForm(
-                              formGroup: controller.form,
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                                color: Colors.grey.shade200))),
-                                    child: ReactiveTextField(
-                                      formControlName: 'username',
-                                      decoration: InputDecoration(
-                                          hintText: "Email or Phone number",
-                                          hintStyle:
-                                              TextStyle(color: Colors.grey),
-                                          border: InputBorder.none),
-                                    ),
+                        duration: const Duration(milliseconds: 1400),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: const [
+                                BoxShadow(
+                                    color: Color.fromRGBO(105, 148, 227, .3),
+                                    blurRadius: 20,
+                                    offset: Offset(0, 10))
+                              ]),
+                          child: ReactiveForm(
+                            formGroup: controller.form,
+                            child: Column(
+                              children: <Widget>[
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              color: Colors.grey.shade200))),
+                                  child: ReactiveTextField(
+                                    formControlName: 'email',
+                                    decoration: const InputDecoration(
+                                        hintText: "Email",
+                                        hintStyle:
+                                            TextStyle(color: Colors.grey),
+                                        border: InputBorder.none),
                                   ),
-                                  Container(
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                                color: Colors.grey.shade200))),
-                                    child: ReactiveTextField(
-                                      formControlName: 'password',
-                                      obscureText: true,
-                                      decoration: InputDecoration(
-                                          hintText: "Password",
-                                          hintStyle:
-                                              TextStyle(color: Colors.grey),
-                                          border: InputBorder.none),
-                                    ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              color: Colors.grey.shade200))),
+                                  child: ReactiveTextField(
+                                    formControlName: 'password',
+                                    obscureText: true,
+                                    decoration: const InputDecoration(
+                                        hintText: "Password",
+                                        hintStyle:
+                                            TextStyle(color: Colors.grey),
+                                        border: InputBorder.none),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          )),
+                          ),
+                        ),
+                      ),
                       const SizedBox(
                         height: 40,
                       ),
-                      FadeInUp(
-                          duration: const Duration(milliseconds: 1500),
-                          child: const Text(
-                            "Forgot Password?",
-                            style: TextStyle(color: Colors.grey),
-                          )),
-                      const SizedBox(
-                        height: 40,
+                      GestureDetector(
+                        onTap: () {
+                          debugPrint("Forget Password");
+                        },
+                        child: FadeInUp(
+                            duration: const Duration(milliseconds: 1500),
+                            child: const Text(
+                              "Forgot Password?",
+                              style: TextStyle(color: Colors.grey),
+                            )),
                       ),
+                      const SizedBox(height: 30),
                       FadeInUp(
                           duration: const Duration(milliseconds: 1600),
                           child: MaterialButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              if (controller.form.valid) {
+                              } else {
+                                debugPrint("Error");
+                              }
+                            },
                             height: 50,
                             // margin: EdgeInsets.symmetric(horizontal: 50),
-                            color: Colors.orange[900],
+                            color: Colors.blue[900],
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(50),
                             ),
@@ -176,66 +159,19 @@ class SignInPage extends StatelessWidget {
                               ),
                             ),
                           )),
-                      const SizedBox(
-                        height: 20,
+                      const SizedBox(height: 30),
+                      GestureDetector(
+                        onTap: () {
+                          debugPrint("Guest");
+                          Get.off(() => const Home());
+                        },
+                        child: FadeInUp(
+                            duration: const Duration(milliseconds: 1500),
+                            child: const Text(
+                              "Login as a guest",
+                              style: TextStyle(color: Colors.grey),
+                            )),
                       ),
-                      // FadeInUp(
-                      //   duration: const Duration(milliseconds: 1700),
-                      //   child: const Text(
-                      //     "Continue with social media",
-                      //     style: TextStyle(color: Colors.grey),
-                      //   ),
-                      // ),
-                      // const SizedBox(
-                      //   height: 30,
-                      // ),
-                      // Row(
-                      //   children: <Widget>[
-                      //     Expanded(
-                      //       child: FadeInUp(
-                      //           duration: const Duration(milliseconds: 1800),
-                      //           child: MaterialButton(
-                      //             onPressed: () {},
-                      //             height: 50,
-                      //             color: Colors.blue,
-                      //             shape: RoundedRectangleBorder(
-                      //               borderRadius: BorderRadius.circular(50),
-                      //             ),
-                      //             child: const Center(
-                      //               child: Text(
-                      //                 "Facebook",
-                      //                 style: TextStyle(
-                      //                     color: Colors.white,
-                      //                     fontWeight: FontWeight.bold),
-                      //               ),
-                      //             ),
-                      //           )),
-                      //     ),
-                      //     const SizedBox(
-                      //       width: 30,
-                      //     ),
-                      //     Expanded(
-                      //       child: FadeInUp(
-                      //           duration: const Duration(milliseconds: 1900),
-                      //           child: MaterialButton(
-                      //             onPressed: () {},
-                      //             height: 50,
-                      //             shape: RoundedRectangleBorder(
-                      //               borderRadius: BorderRadius.circular(50),
-                      //             ),
-                      //             color: Colors.black,
-                      //             child: const Center(
-                      //               child: Text(
-                      //                 "Github",
-                      //                 style: TextStyle(
-                      //                     color: Colors.white,
-                      //                     fontWeight: FontWeight.bold),
-                      //               ),
-                      //             ),
-                      //           )),
-                      //     )
-                      //   ],
-                      // )
                     ],
                   ),
                 ),
@@ -250,7 +186,9 @@ class SignInPage extends StatelessWidget {
 
 class SignInController extends GetxController {
   FormGroup form = FormGroup({
-    'username': FormControl<String>(validators: [Validators.required]),
-    'password': FormControl<String>(validators: [Validators.required])
+    'email': FormControl<String>(
+        validators: [Validators.required, Validators.email]),
+    'password': FormControl<String>(
+        validators: [Validators.required, Validators.minLength(8)])
   });
 }
