@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:either_dart/either.dart';
 import 'package:get/get.dart';
 import 'package:rakshny/core/models/app_failure.dart';
@@ -98,7 +100,13 @@ class AuthServiceImpl implements AuthService {
   }
 
   @override
-  Future<Either<Failure, dynamic>> login({required Map<String, dynamic> body}) {
-    return Future.value(Left(Failure(message: "message")));
+  Future<Either<Failure, dynamic>> login(
+      {required Map<String, dynamic> body}) async {
+    var res = await api.login(body);
+    if (res.statusCode == 200) {
+      return Right(res.body);
+    } else {
+      return Left(Failure(message: res.bodyString ?? "Error in login"));
+    }
   }
 }

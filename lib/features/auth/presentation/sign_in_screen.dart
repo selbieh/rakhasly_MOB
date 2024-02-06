@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rakshny/core/models/user.dart';
+import 'package:rakshny/core/services/auth/I_auth_service.dart';
 import 'package:rakshny/features/home/presentation/home.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:animate_do/animate_do.dart';
@@ -133,32 +135,24 @@ class SignInPage extends GetView<SignInController> {
                             )),
                       ),
                       const SizedBox(height: 30),
-                      FadeInUp(
-                          duration: const Duration(milliseconds: 1600),
-                          child: MaterialButton(
-                            onPressed: () async {
-                              if (controller.form.valid) {
-                              } else {
-                                debugPrint("Error");
-                              }
-                            },
-                            height: 50,
-                            // margin: EdgeInsets.symmetric(horizontal: 50),
-                            color: Colors.blue[900],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            // decoration: BoxDecoration(
-                            // ),
-                            child: const Center(
-                              child: Text(
-                                "Login",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          )),
+                      controller.obx(
+                        (state) {
+                          debugPrint("Logged in");
+                          return const SizedBox();
+                        },
+                        onEmpty: FadeInUp(
+                            duration: const Duration(milliseconds: 1600),
+                            child: LoginBtn(controller: controller)),
+                        onError: (error) => Column(
+                          children: [
+                            LoginBtn(controller: controller),
+                            const SizedBox(height: 20),
+                            Text(error ?? "Error",
+                                style: const TextStyle(color: Colors.red)),
+                          ],
+                        ),
+                        onLoading: const CircularProgressIndicator(),
+                      ),
                       const SizedBox(height: 30),
                       GestureDetector(
                         onTap: () {
@@ -184,11 +178,67 @@ class SignInPage extends GetView<SignInController> {
   }
 }
 
-class SignInController extends GetxController {
+class LoginBtn extends StatelessWidget {
+  const LoginBtn({
+    super.key,
+    required this.controller,
+  });
+
+  final SignInController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+      onPressed: () async {
+        if (controller.form.valid) {
+          FocusManager.instance.primaryFocus?.unfocus();
+
+          await controller.signIn();
+        } else {
+          debugPrint("Error");
+        }
+      },
+      height: 50,
+      // margin: EdgeInsets.symmetric(horizontal: 50),
+      color: Colors.blue[900],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(50),
+      ),
+      // decoration: BoxDecoration(
+      // ),
+      child: const Center(
+        child: Text(
+          "Login",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+}
+
+class SignInController extends GetxController with StateMixin<bool> {
   FormGroup form = FormGroup({
     'email': FormControl<String>(
         validators: [Validators.required, Validators.email]),
     'password': FormControl<String>(
         validators: [Validators.required, Validators.minLength(8)])
   });
+
+  SignInController() {
+    change(false, status: RxStatus.empty());
+  }
+
+  Future signIn() async {
+    final authService = Get.find<AuthService>();
+    change(null, status: RxStatus.loading());
+    var res = await authService.login(body: form.value);
+    res.fold((left) {
+      change(false, status: RxStatus.error(left.message));
+    }, (right) async {
+      var user = User.fromJson(right);
+      await authService.saveUser(user: user);
+      change(true, status: RxStatus.success());
+      Get.offAll(const Home());
+    });
+  }
 }
