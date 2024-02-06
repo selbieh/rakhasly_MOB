@@ -11,7 +11,7 @@ class SignInPage extends GetView<SignInController> {
 
   @override
   Widget build(BuildContext context) {
-    // SignInController controller = Get.find(tag: 'SignInController');
+    // Get.put(SignInController());
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -224,7 +224,9 @@ class SignInController extends GetxController with StateMixin<bool> {
         validators: [Validators.required, Validators.minLength(8)])
   });
 
-  SignInController() {
+  @override
+  onInit() {
+    super.onInit();
     change(false, status: RxStatus.empty());
   }
 

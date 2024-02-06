@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:either_dart/either.dart';
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:rakshny/core/models/app_failure.dart';
+import 'package:rakshny/core/models/user.dart';
 import 'package:rakshny/core/services/auth/I_auth_service.dart';
 import 'package:rakshny/core/services/http_service.dart';
 
@@ -10,18 +12,25 @@ class AuthServiceImpl implements AuthService {
   HttpService api;
   AuthServiceImpl({required this.api});
 
-  dynamic? _userModel;
-  dynamic? get userModel => _userModel;
+  User? _userModel;
+
+  @override
+  User? get user => _userModel;
+
+  final box = GetStorage();
 
   // bool get isLogged =>
   //     SharedPref.getBool(PrefKeys.isUserLoggedIn) ?? false == true;
 
-  Future<bool> saveUser({required dynamic user}) async {
+  Future<bool> saveUser({required User user}) async {
     try {
       // await SharedPref.setString(PrefKeys.userData, json.encode(user.toJson()));
       // await SharedPref.setString(
       // PrefKeys.token, user.token ?? "USER_TOKEN_NOT_FOUND");
       // await SharedPref.setBool(PrefKeys.isUserLoggedIn, true);
+      await box.write('user', user.toJson());
+      await box.write('isLogged', true);
+
       _userModel = user;
       return true;
     } catch (error) {
@@ -31,12 +40,13 @@ class AuthServiceImpl implements AuthService {
 
   Future<bool> loadUser() async {
     try {
-      // Map<String, dynamic> userMap =
-      // json.decode(SharedPref.getString(PrefKeys.userData)!);
-      // _userModel = UserModel.fromJson(userMap);
-      // Logger().i(_userModel);
-      // notifyListeners();
-      return true;
+      if (box.hasData('user')) {
+        debugPrint("Load User Method");
+        _userModel = User.fromJson(box.read('user'));
+        return true;
+      } else {
+        return false;
+      }
     } catch (error) {
       // await SharedPref.clear();
       return false;
@@ -49,39 +59,13 @@ class AuthServiceImpl implements AuthService {
       // await SharedPref.remove(PrefKeys.token);
       // await SharedPref.remove(PrefKeys.fcmToken);
       // await SharedPref.setBool(PrefKeys.isUserLoggedIn, false);
+      await box.erase();
       _userModel = null;
       // notifyListeners();
       return true;
     } catch (error) {
       return false;
     }
-  }
-
-  @override
-  Future<Either<Failure, dynamic>> loginByPhone(
-      {required Map<String, dynamic> body}) async {
-    // final res = await api.request(
-    //   EndPoints.loginByPhone,
-    //   type: RequestType.post,
-    //   body: body,
-    //   // headers: Header.clientAuth,
-    // );
-    // return res;
-    var res = Future.value(Left(Failure(message: "test")));
-    return res;
-  }
-
-  @override
-  Future<Either<Failure, dynamic>> verifyAccount(
-      {required Map<String, dynamic> body}) async {
-    // final res = await api.request(
-    //   EndPoints.verifyAccount,
-    //   type: RequestType.post,
-    //   body: body,
-    //   // headers: Header.clientAuth,
-    // );
-    var res = Future.value(Left(Failure(message: "test")));
-    return res;
   }
 
   @override

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rakshny/features/auth/presentation/sign_in_screen.dart';
-import 'package:rakshny/features/profile/presentation/profile_page.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:rakshny/features/splash/splash_page.dart';
 import 'package:rakshny/intial_binding.dart';
 
-void main() {
-  Get.lazyPut(() => SignInController(), tag: 'SignInController');
-  Get.lazyPut(() => ProfileController(), tag: 'ProfileController', fenix: true);
+void main() async {
+  // Get.lazyPut(() => SignInController(), tag: 'SignInController');
+  // Get.lazyPut(() => ProfileController(), tag: 'ProfileController', fenix: true);
+  await GetStorage.init();
+
   runApp(const MyApp());
 }
 

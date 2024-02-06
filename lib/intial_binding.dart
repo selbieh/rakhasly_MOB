@@ -13,7 +13,6 @@ class RakhslyBinding implements Bindings {
     Get.lazyPut<AuthService>(() => AuthServiceImpl(api: Get.find()),
         fenix: true);
     Get.lazyPut(() => SignInController());
-    Get.lazyPut(() => SignInController());
     Get.lazyPut(() => ProfileController());
   }
 }

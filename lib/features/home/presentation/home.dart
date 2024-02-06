@@ -1,6 +1,8 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rakshny/core/services/auth/I_auth_service.dart';
+import 'package:rakshny/features/auth/presentation/sign_in_screen.dart';
 import 'package:rakshny/features/profile/presentation/profile_page.dart';
 
 class Home extends StatelessWidget {
@@ -34,7 +36,11 @@ class Home extends StatelessWidget {
         "asset": "assets/images/profile.jpg",
         "tag": "profile_image",
         "onClick": () {
-          Get.to(() => const ProfilePage());
+          if (Get.find<AuthService>().user == null) {
+            Get.to(() => const SignInPage());
+          } else {
+            Get.to(() => const ProfilePage());
+          }
         }
       },
     ];
@@ -83,7 +89,7 @@ class Home extends StatelessWidget {
                       child: CircleAvatar(
                         radius: 40,
                         backgroundColor: Colors.blue.shade800,
-                        child: CircleAvatar(
+                        child: const CircleAvatar(
                           radius: 35,
                           backgroundColor: Colors.white,
                           child: Icon(Icons.person_2_outlined, size: 40),
@@ -96,7 +102,7 @@ class Home extends StatelessWidget {
             ),
             Expanded(
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(60),
@@ -133,6 +139,7 @@ class Home extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class GridItem extends StatelessWidget {
   final int index;
   final String asset;

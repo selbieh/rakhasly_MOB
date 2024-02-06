@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rakshny/core/models/user.dart';
+import 'package:rakshny/core/services/auth/I_auth_service.dart';
+import 'package:rakshny/features/auth/presentation/sign_in_screen.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends GetView<ProfileController> {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    ProfileController controller = Get.find(tag: 'ProfileController');
+    Get.put(ProfileController());
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       extendBody: true,
       appBar: AppBar(
         title: const Text("Profile"),
         leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
+            icon: const Icon(Icons.arrow_back_ios),
             onPressed: () {
               Get.back();
             }),
@@ -125,7 +128,7 @@ class ProfilePage extends StatelessWidget {
                                         bottom: BorderSide(
                                             color: Colors.grey.shade200))),
                                 child: ReactiveTextField(
-                                  formControlName: 'birthdate',
+                                  formControlName: 'phone',
                                   showErrors: (controller) =>
                                       controller.hasErrors,
                                   decoration: const InputDecoration(
@@ -173,6 +176,63 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: MaterialButton(
+                  onPressed: () async {
+                    await Get.find<AuthService>().removeUser();
+                    Get.offAll(() => const SignInPage());
+                  },
+                  height: 50,
+                  // margin: EdgeInsets.symmetric(horizontal: 50),
+                  color: Colors.blue[500],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  // decoration: BoxDecoration(
+                  // ),
+                  child: const Center(
+                    child: Text(
+                      "Logout",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: MaterialButton(
+                  onPressed: () async {
+                    if (controller.form.valid) {
+                    } else {
+                      debugPrint("Error");
+                    }
+                  },
+                  height: 50,
+                  // margin: EdgeInsets.symmetric(horizontal: 50),
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    side: const BorderSide(color: Colors.red),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  // decoration: BoxDecoration(
+                  // ),
+                  child: const Center(
+                    child: Text(
+                      "Delete Account",
+                      style: TextStyle(
+                          color: Colors.red, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -181,10 +241,17 @@ class ProfilePage extends StatelessWidget {
 }
 
 class ProfileController extends GetxController {
-  FormGroup form = new FormGroup({
-    "name": FormControl<String>(value: "Omar"),
-    "email": FormControl<String>(value: "admin@gmail.com"),
-    "photo": FormControl<String>(),
-    "birthdate": FormControl<String>(value: "17/10/1997"),
-  });
+  final AuthService authService;
+  late UserInfo? user;
+
+  ProfileController() : authService = Get.find<AuthService>() {
+    user = authService.user!.user;
+    form = FormGroup({
+      "name": FormControl<String?>(value: user?.name),
+      "email": FormControl<String>(value: user?.email),
+      "photo": FormControl<String>(),
+      "phone": FormControl<String>(value: user?.phone),
+    });
+  }
+  late FormGroup form;
 }

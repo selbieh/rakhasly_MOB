@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:rakshny/core/services/auth/I_auth_service.dart';
 import 'package:rakshny/features/auth/presentation/sign_in_screen.dart';
 import 'package:rakshny/features/home/presentation/home.dart';
 
@@ -12,8 +15,13 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 3000)).then((value) {
-      Get.off(() => const SignInPage());
+    Future.delayed(const Duration(milliseconds: 3000)).then((value) async {
+      if (GetStorage().hasData('user')) {
+        await Get.find<AuthService>().loadUser();
+        Get.off(() => const Home());
+      } else {
+        Get.off(() => const SignInPage());
+      }
     });
   }
 
