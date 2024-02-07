@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:either_dart/either.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
@@ -25,6 +23,7 @@ class AuthServiceImpl implements AuthService {
   // bool get isLogged =>
   //     SharedPref.getBool(PrefKeys.isUserLoggedIn) ?? false == true;
 
+  @override
   Future<bool> saveUser({required User user}) async {
     try {
       // await SharedPref.setString(PrefKeys.userData, json.encode(user.toJson()));
@@ -41,6 +40,7 @@ class AuthServiceImpl implements AuthService {
     }
   }
 
+  @override
   Future<User?> loadUser() async {
     try {
       if (box.hasData('user')) {
@@ -51,8 +51,10 @@ class AuthServiceImpl implements AuthService {
     } catch (error) {
       debugPrint(error.toString());
     }
+    return null;
   }
 
+  @override
   Future<bool> isAuthiticatedUser() async {
     try {
       if (box.hasData('isLogged')) {
@@ -67,15 +69,11 @@ class AuthServiceImpl implements AuthService {
     }
   }
 
+  @override
   Future<bool> removeUser() async {
     try {
-      // await SharedPref.remove(PrefKeys.userData);
-      // await SharedPref.remove(PrefKeys.token);
-      // await SharedPref.remove(PrefKeys.fcmToken);
-      // await SharedPref.setBool(PrefKeys.isUserLoggedIn, false);
       await box.erase();
       _userModel = null;
-      // notifyListeners();
       return true;
     } catch (error) {
       return false;
@@ -106,10 +104,5 @@ class AuthServiceImpl implements AuthService {
     } else {
       return Left(Failure(message: res.bodyString ?? "Error in login"));
     }
-  }
-
-  @override
-  set isLoggedIn(bool _isLoggedIn) {
-    isLoggedIn = _userModel != null;
   }
 }

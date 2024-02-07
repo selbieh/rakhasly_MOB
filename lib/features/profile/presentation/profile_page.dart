@@ -250,11 +250,10 @@ class ProfileController extends GetxController {
   }
 
   ProfileController() : authService = Get.find<AuthService>() {
-    user = authService.user!.user;
+    user = authService.user?.user;
     form = FormGroup({
       "name": FormControl<String?>(value: user?.name),
       "email": FormControl<String>(value: user?.email),
-      "photo": FormControl<String>(),
       "phone": FormControl<String>(value: user?.phone),
     });
   }

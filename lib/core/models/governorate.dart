@@ -11,7 +11,7 @@ class Governorate with _$Governorate {
   const factory Governorate({
     required int id,
     required String name,
-    required List<Traffics> traffics,
+    @JsonKey(name: 'licensing_units') required List<Traffics> traffics,
   }) = _Governorate;
 
   factory Governorate.fromJson(Map<String, Object?> json) =>

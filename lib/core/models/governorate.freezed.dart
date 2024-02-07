@@ -22,6 +22,7 @@ Governorate _$GovernorateFromJson(Map<String, dynamic> json) {
 mixin _$Governorate {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  @JsonKey(name: 'licensing_units')
   List<Traffics> get traffics => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -36,7 +37,10 @@ abstract class $GovernorateCopyWith<$Res> {
           Governorate value, $Res Function(Governorate) then) =
       _$GovernorateCopyWithImpl<$Res, Governorate>;
   @useResult
-  $Res call({int id, String name, List<Traffics> traffics});
+  $Res call(
+      {int id,
+      String name,
+      @JsonKey(name: 'licensing_units') List<Traffics> traffics});
 }
 
 /// @nodoc
@@ -81,7 +85,10 @@ abstract class _$$GovernorateImplCopyWith<$Res>
       __$$GovernorateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String name, List<Traffics> traffics});
+  $Res call(
+      {int id,
+      String name,
+      @JsonKey(name: 'licensing_units') List<Traffics> traffics});
 }
 
 /// @nodoc
@@ -122,7 +129,7 @@ class _$GovernorateImpl with DiagnosticableTreeMixin implements _Governorate {
   const _$GovernorateImpl(
       {required this.id,
       required this.name,
-      required final List<Traffics> traffics})
+      @JsonKey(name: 'licensing_units') required final List<Traffics> traffics})
       : _traffics = traffics;
 
   factory _$GovernorateImpl.fromJson(Map<String, dynamic> json) =>
@@ -134,6 +141,7 @@ class _$GovernorateImpl with DiagnosticableTreeMixin implements _Governorate {
   final String name;
   final List<Traffics> _traffics;
   @override
+  @JsonKey(name: 'licensing_units')
   List<Traffics> get traffics {
     if (_traffics is EqualUnmodifiableListView) return _traffics;
     // ignore: implicit_dynamic_type
@@ -188,6 +196,7 @@ abstract class _Governorate implements Governorate {
   const factory _Governorate(
       {required final int id,
       required final String name,
+      @JsonKey(name: 'licensing_units')
       required final List<Traffics> traffics}) = _$GovernorateImpl;
 
   factory _Governorate.fromJson(Map<String, dynamic> json) =
@@ -198,6 +207,7 @@ abstract class _Governorate implements Governorate {
   @override
   String get name;
   @override
+  @JsonKey(name: 'licensing_units')
   List<Traffics> get traffics;
   @override
   @JsonKey(ignore: true)
