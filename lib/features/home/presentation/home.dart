@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rakshny/core/services/auth/I_auth_service.dart';
 import 'package:rakshny/features/auth/presentation/sign_in_screen.dart';
+import 'package:rakshny/features/home/controller/home_controller.dart';
+import 'package:rakshny/features/license/presentation/driving.dart';
 import 'package:rakshny/features/profile/presentation/profile_page.dart';
 
-class Home extends StatelessWidget {
+class Home extends GetView<HomeController> {
   const Home({super.key});
 
   @override
@@ -16,7 +18,11 @@ class Home extends StatelessWidget {
         "asset": "assets/images/driver_license_2.jpg",
         "tag": "",
         "onClick": () {
-          debugPrint("test");
+          if (!Get.find<AuthService>().isLoggedIn) {
+            Get.to(() => const SignInPage());
+          } else {
+            Get.to(() => const DrivingLicensePage());
+          }
         }
       },
       {
@@ -32,19 +38,20 @@ class Home extends StatelessWidget {
         "onClick": () {}
       },
       {
-        "title": "Profile",
+        "title": "My requests",
         "asset": "assets/images/profile.jpg",
         "tag": "profile_image",
-        "onClick": () {
-          if (Get.find<AuthService>().user == null) {
+        "onClick": () async {
+          if (!Get.find<AuthService>().isLoggedIn) {
             Get.to(() => const SignInPage());
-          } else {
-            Get.to(() => const ProfilePage());
           }
+          //  else {
+          //   Get.to(() => const ProfilePage());
+          // }
         }
       },
     ];
-
+    Get.put(HomeController());
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -76,14 +83,23 @@ class Home extends StatelessWidget {
                       ),
                       FadeInUp(
                           duration: const Duration(milliseconds: 1300),
-                          child: const Text(
-                            "Guest user",
-                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          child: Text(
+                            controller.user != null
+                                ? controller.user?.user?.name ?? "User"
+                                : "Guest",
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 20),
                           )),
                     ],
                   ),
                   GestureDetector(
-                    onTap: () => Get.to(() => const ProfilePage()),
+                    onTap: () async {
+                      if (!await Get.find<AuthService>().isAuthiticatedUser()) {
+                        Get.to(() => const SignInPage());
+                      } else {
+                        Get.to(() => const ProfilePage());
+                      }
+                    },
                     child: Hero(
                       tag: "profile_image2",
                       child: CircleAvatar(

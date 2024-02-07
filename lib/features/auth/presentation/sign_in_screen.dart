@@ -11,7 +11,7 @@ class SignInPage extends GetView<SignInController> {
 
   @override
   Widget build(BuildContext context) {
-    // Get.put(SignInController());
+    Get.put(SignInController());
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -38,18 +38,20 @@ class SignInPage extends GetView<SignInController> {
                   children: <Widget>[
                     FadeInUp(
                         duration: const Duration(milliseconds: 1000),
-                        child: const Text(
-                          "Login",
-                          style: TextStyle(color: Colors.white, fontSize: 40),
+                        child: Text(
+                          "Login".tr,
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 40),
                         )),
                     const SizedBox(
                       height: 10,
                     ),
                     FadeInUp(
                         duration: const Duration(milliseconds: 1300),
-                        child: const Text(
-                          "Welcome Back",
-                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        child: Text(
+                          "Welcome Back".tr,
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 18),
                         )),
                   ],
                 ),
@@ -108,6 +110,13 @@ class SignInPage extends GetView<SignInController> {
                                   child: ReactiveTextField(
                                     formControlName: 'password',
                                     obscureText: true,
+                                    showErrors: (control) =>
+                                        control.invalid &&
+                                        control.touched &&
+                                        control.dirty,
+                                    // showErrors: (control) =>
+                                    //     control.hasErrors &&
+                                    //     (control.value?.isBlank ?? false),
                                     decoration: const InputDecoration(
                                         hintText: "Password",
                                         hintStyle:
@@ -129,9 +138,9 @@ class SignInPage extends GetView<SignInController> {
                         },
                         child: FadeInUp(
                             duration: const Duration(milliseconds: 1500),
-                            child: const Text(
-                              "Forgot Password?",
-                              style: TextStyle(color: Colors.grey),
+                            child: Text(
+                              "Forgot Password?".tr,
+                              style: const TextStyle(color: Colors.grey),
                             )),
                       ),
                       const SizedBox(height: 30),
@@ -147,7 +156,7 @@ class SignInPage extends GetView<SignInController> {
                           children: [
                             LoginBtn(controller: controller),
                             const SizedBox(height: 20),
-                            Text(error ?? "Error",
+                            Text(error ?? "Error".tr,
                                 style: const TextStyle(color: Colors.red)),
                           ],
                         ),
@@ -161,8 +170,8 @@ class SignInPage extends GetView<SignInController> {
                         },
                         child: FadeInUp(
                             duration: const Duration(milliseconds: 1500),
-                            child: const Text(
-                              "Login as a guest",
+                            child: Text(
+                              "Login as a guest".tr,
                               style: TextStyle(color: Colors.grey),
                             )),
                       ),
@@ -190,6 +199,7 @@ class LoginBtn extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialButton(
       onPressed: () async {
+        controller.form.unfocus();
         if (controller.form.valid) {
           FocusManager.instance.primaryFocus?.unfocus();
 
@@ -219,8 +229,10 @@ class LoginBtn extends StatelessWidget {
 class SignInController extends GetxController with StateMixin<bool> {
   FormGroup form = FormGroup({
     'email': FormControl<String>(
+        value: "admin@admin.com",
         validators: [Validators.required, Validators.email]),
     'password': FormControl<String>(
+        value: 'admon@123',
         validators: [Validators.required, Validators.minLength(8)])
   });
 

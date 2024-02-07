@@ -5,6 +5,8 @@ import 'package:rakshny/core/models/user.dart';
 abstract class AuthService {
   User? get user;
 
+  bool isLoggedIn = false;
+
   Future<Either<Failure, dynamic>> login({required Map<String, dynamic> body});
 
   Future<Either<Failure, dynamic>> updateAccount(
@@ -12,7 +14,8 @@ abstract class AuthService {
 
   Future<bool> saveUser({required User user});
 
-  Future<bool> loadUser();
+  Future<User?> loadUser();
+  Future<bool> isAuthiticatedUser();
 
   Future<bool> removeUser();
 }

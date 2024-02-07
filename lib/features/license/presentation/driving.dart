@@ -2,20 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rakshny/core/models/user.dart';
 import 'package:rakshny/core/services/auth/I_auth_service.dart';
+import 'package:rakshny/core/services/http_service.dart';
 import 'package:rakshny/features/auth/presentation/sign_in_screen.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-class ProfilePage extends GetView<ProfileController> {
-  const ProfilePage({super.key});
+class DrivingLicensePage extends GetView<DrivingLicenseController> {
+  const DrivingLicensePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Get.put(ProfileController());
+    Get.put(DrivingLicenseController());
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       extendBody: true,
       appBar: AppBar(
-        title: const Text("Profile"),
+        title: const Text("New Driving License"),
         leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
             onPressed: () {
@@ -69,7 +70,7 @@ class ProfilePage extends GetView<ProfileController> {
                     //     ),
                     //     onPressed: () {},
                     //   ),
-                    // ),
+                    // ),P
                     const SizedBox(height: 20),
                     Container(
                       decoration: BoxDecoration(
@@ -240,17 +241,17 @@ class ProfilePage extends GetView<ProfileController> {
   }
 }
 
-class ProfileController extends GetxController {
-  final AuthService authService;
-  late UserInfo? user;
+class DrivingLicenseController extends GetxController {
+  final HttpService api;
+  UserInfo? user;
 
   @override
   onInit() {
     super.onInit();
   }
 
-  ProfileController() : authService = Get.find<AuthService>() {
-    user = authService.user!.user;
+  DrivingLicenseController() : api = Get.find<HttpService>() {
+    // user = authService.user!.user;
     form = FormGroup({
       "name": FormControl<String?>(value: user?.name),
       "email": FormControl<String>(value: user?.email),

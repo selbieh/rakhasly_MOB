@@ -17,6 +17,9 @@ class AuthServiceImpl implements AuthService {
   @override
   User? get user => _userModel;
 
+  @override
+  bool get isLoggedIn => user != null;
+
   final box = GetStorage();
 
   // bool get isLogged =>
@@ -38,12 +41,23 @@ class AuthServiceImpl implements AuthService {
     }
   }
 
-  Future<bool> loadUser() async {
+  Future<User?> loadUser() async {
     try {
       if (box.hasData('user')) {
         debugPrint("Load User Method");
         _userModel = User.fromJson(box.read('user'));
-        return true;
+        return user;
+      }
+    } catch (error) {
+      debugPrint(error.toString());
+    }
+  }
+
+  Future<bool> isAuthiticatedUser() async {
+    try {
+      if (box.hasData('isLogged')) {
+        debugPrint("IS AUTHINTICATED USER");
+        return box.read<bool>('isLogged') ?? false;
       } else {
         return false;
       }
@@ -92,5 +106,10 @@ class AuthServiceImpl implements AuthService {
     } else {
       return Left(Failure(message: res.bodyString ?? "Error in login"));
     }
+  }
+
+  @override
+  set isLoggedIn(bool _isLoggedIn) {
+    isLoggedIn = _userModel != null;
   }
 }
