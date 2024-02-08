@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:rakshny/core/services/auth/I_auth_service.dart';
 import 'package:rakshny/features/auth/presentation/sign_in_screen.dart';
 import 'package:rakshny/features/home/controller/home_controller.dart';
-import 'package:rakshny/features/license/presentation/driving.dart';
+import 'package:rakshny/features/license/presentation/car_license.dart';
 import 'package:rakshny/features/profile/presentation/profile_page.dart';
 
 class Home extends GetView<HomeController> {
@@ -14,34 +14,42 @@ class Home extends GetView<HomeController> {
   Widget build(BuildContext context) {
     var gridItems = [
       {
-        "title": "New driving license",
+        "title": "New driving license".tr,
         "asset": "assets/images/driver_license_2.jpg",
         "tag": "",
         "onClick": () {
           if (!Get.find<AuthService>().isLoggedIn) {
             Get.to(() => const SignInPage());
-          } else {
-            Get.to(() => const DrivingLicensePage());
           }
+          //  else {
+          //   Get.to(() => const CarLicensePage());
+          // }
         }
       },
       {
-        "title": "Renew driving license",
+        "title": "Renew driving license".tr,
         "asset": "assets/images/renew_form.jpg",
         "tag": "",
         "onClick": () {}
       },
       {
-        "title": "Car driving license",
+        "title": "Car driving license".tr,
         "asset": "assets/images/car_license.png",
         "tag": "",
-        "onClick": () {}
+        "onClick": () {
+          if (!Get.find<AuthService>().isLoggedIn) {
+            Get.to(() => const SignInPage());
+          } else {
+            Get.to(() => const CarLicensePage());
+          }
+        }
       },
       {
-        "title": "My requests",
+        "title": "My requests".tr,
         "asset": "assets/images/profile.jpg",
         "tag": "profile_image",
         "onClick": () async {
+          var res = Get.find<AuthService>().isLoggedIn;
           if (!Get.find<AuthService>().isLoggedIn) {
             Get.to(() => const SignInPage());
           }
@@ -74,9 +82,10 @@ class Home extends GetView<HomeController> {
                     children: <Widget>[
                       FadeInUp(
                           duration: const Duration(milliseconds: 1000),
-                          child: const Text(
-                            "Welcome",
-                            style: TextStyle(color: Colors.white, fontSize: 40),
+                          child: Text(
+                            "Welcome".tr,
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 40),
                           )),
                       const SizedBox(
                         height: 10,

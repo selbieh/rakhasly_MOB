@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:rakshny/core/models/user.dart';
 import 'package:rakshny/core/services/auth/I_auth_service.dart';
 import 'package:rakshny/features/auth/presentation/sign_in_screen.dart';
@@ -15,7 +16,7 @@ class ProfilePage extends GetView<ProfileController> {
       // resizeToAvoidBottomInset: false,
       extendBody: true,
       appBar: AppBar(
-        title: const Text("Profile"),
+        title: Text("Profile".tr),
         leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
             onPressed: () {
@@ -139,6 +140,42 @@ class ProfilePage extends GetView<ProfileController> {
                                 ),
                               ),
                             ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: Colors.grey.shade200))),
+                                child: ReactiveDropdownField(
+                                  items: ['English', "العربية"]
+                                      .map((e) => DropdownMenuItem(
+                                          value: e, child: Text(e)))
+                                      .toList(),
+                                  formControlName: 'language',
+                                  onChanged: (control) async {
+                                    var lang = control.value;
+                                    if (lang != null) {
+                                      Get.updateLocale(lang == 'English'
+                                          ? const Locale('en')
+                                          : const Locale('ar'));
+
+                                      await GetStorage()
+                                          .write('language', lang);
+                                    }
+                                  },
+                                  decoration: InputDecoration(
+                                      hintText: "Language".tr,
+                                      labelStyle:
+                                          const TextStyle(color: Colors.black),
+                                      hintStyle:
+                                          const TextStyle(color: Colors.grey),
+                                      border: InputBorder.none),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -166,9 +203,9 @@ class ProfilePage extends GetView<ProfileController> {
                   ),
                   // decoration: BoxDecoration(
                   // ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      "Save",
+                      "Save".tr,
                       style: TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
@@ -193,9 +230,9 @@ class ProfilePage extends GetView<ProfileController> {
                   ),
                   // decoration: BoxDecoration(
                   // ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      "Logout",
+                      "Logout".tr,
                       style: TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
@@ -223,9 +260,9 @@ class ProfilePage extends GetView<ProfileController> {
                   ),
                   // decoration: BoxDecoration(
                   // ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      "Delete Account",
+                      "Delete Account".tr,
                       style: TextStyle(
                           color: Colors.red, fontWeight: FontWeight.bold),
                     ),
@@ -244,17 +281,14 @@ class ProfileController extends GetxController {
   final AuthService authService;
   late UserInfo? user;
 
-  @override
-  onInit() {
-    super.onInit();
-  }
-
   ProfileController() : authService = Get.find<AuthService>() {
     user = authService.user?.user;
     form = FormGroup({
       "name": FormControl<String?>(value: user?.name),
       "email": FormControl<String>(value: user?.email),
       "phone": FormControl<String>(value: user?.phone),
+      "language": FormControl<String>(
+          value: Get.locale?.languageCode == "en" ? "English" : "العربية"),
     });
   }
   late FormGroup form;

@@ -7,19 +7,20 @@ import 'package:rakshny/core/models/governorate.dart';
 import 'package:rakshny/core/models/traffics.dart';
 import 'package:rakshny/core/models/user.dart';
 import 'package:rakshny/core/services/http_service.dart';
+import 'package:rakshny/features/home/presentation/home.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-class DrivingLicensePage extends GetView<DrivingLicenseController> {
-  const DrivingLicensePage({super.key});
+class CarLicensePage extends GetView<CarLicenseController> {
+  const CarLicensePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Get.put(DrivingLicenseController());
+    Get.put(CarLicenseController());
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       extendBody: true,
       appBar: AppBar(
-        title: const Text("New Driving License"),
+        title: Text("Car License".tr),
         leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
             onPressed: () {
@@ -148,9 +149,9 @@ class DrivingLicensePage extends GetView<DrivingLicenseController> {
                                         controller: controller,
                                         child: ReactiveDropdownField(
                                             items: [
-                                              '1 Year',
-                                              '2 Year',
-                                              '3 Year'
+                                              '1 Year'.tr,
+                                              '2 Year'.tr,
+                                              '3 Year'.tr
                                             ]
                                                 .map((e) => DropdownMenuItem(
                                                       value: e,
@@ -173,67 +174,53 @@ class DrivingLicensePage extends GetView<DrivingLicenseController> {
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: FormItem(
                                     controller: controller,
-                                    child: ReactiveDatePicker<DateTime>(
+                                    child: ReactiveTextField(
                                       formControlName: 'date',
-                                      firstDate: DateTime(DateTime.now().month),
-                                      lastDate:
-                                          DateTime(DateTime.now().month + 1),
-                                      builder: (context, picker, child) {
-                                        Widget suffix = InkWell(
-                                          onTap: () {
-                                            // workaround until https://github.com/flutter/flutter/issues/39376
-                                            // will be fixed
-
-                                            // Unfocus all focus nodes
-                                            controller._focusNode.unfocus();
-
-                                            // Disable text field's focus node request
-                                            controller._focusNode
-                                                .canRequestFocus = false;
-
-                                            // clear field value
-                                            picker.control.value = null;
-
-                                            //Enable the text field's focus node request after some delay
-                                            Future.delayed(
-                                                const Duration(
-                                                    milliseconds: 100), () {
-                                              controller._focusNode
-                                                  .canRequestFocus = true;
-                                            });
-                                          },
-                                          child: const Icon(Icons.clear),
-                                        );
-
-                                        if (picker.value == null) {
-                                          suffix =
-                                              const Icon(Icons.calendar_today);
+                                      onTap: (_) async {
+                                        if (controller
+                                            ._focusNode.canRequestFocus) {
+                                          controller._focusNode.unfocus();
+                                          var picked = await showDatePicker(
+                                              context: context,
+                                              firstDate: DateTime(
+                                                DateTime.now().year,
+                                                DateTime.now().month,
+                                              ),
+                                              lastDate: DateTime(
+                                                  DateTime.now().year,
+                                                  DateTime.now().month,
+                                                  31));
+                                          if (picked != null) {
+                                            controller.form.controls['date']
+                                                ?.value = picked;
+                                            controller.update();
+                                          }
                                         }
-
-                                        return ReactiveTextField(
-                                          onTap: (_) {
-                                            if (controller
-                                                ._focusNode.canRequestFocus) {
-                                              controller._focusNode.unfocus();
-                                              picker.showPicker();
-                                            }
-                                          },
-                                          valueAccessor: DateTimeValueAccessor(
-                                            dateTimeFormat:
-                                                DateFormat('dd MMM yyyy'),
-                                          ),
-                                          focusNode: controller._focusNode,
-                                          formControlName: 'date',
-                                          readOnly: true,
-                                          decoration: InputDecoration(
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 8),
-                                            labelText: 'Visit time',
-                                            suffixIcon: suffix,
-                                          ),
-                                        );
                                       },
+                                      valueAccessor: DateTimeValueAccessor(
+                                        dateTimeFormat:
+                                            DateFormat('dd MMM yyyy'),
+                                      ),
+                                      focusNode: controller._focusNode,
+                                      readOnly: true,
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 8),
+                                        labelText: 'Visit time'.tr,
+                                        suffixIcon: controller.form
+                                                    .controls['date']?.value !=
+                                                null
+                                            ? IconButton(
+                                                onPressed: () {
+                                                  controller
+                                                      .form.controls['date']
+                                                      ?.reset();
+                                                  controller.update();
+                                                },
+                                                icon: const Icon(Icons.close))
+                                            : const SizedBox(),
+                                      ),
                                     )),
                               ),
                             ],
@@ -244,35 +231,42 @@ class DrivingLicensePage extends GetView<DrivingLicenseController> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: MaterialButton(
-                    onPressed: () async {
-                      if (controller.form.valid) {
-                      } else {
-                        debugPrint("Error");
-                      }
-                    },
-                    height: 50,
-                    // margin: EdgeInsets.symmetric(horizontal: 50),
-                    color: Colors.blue[900],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    // decoration: BoxDecoration(
-                    // ),
-                    child: const Center(
-                      child: Text(
-                        "Save",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+              Obx(() => controller.isBusy.isFalse
+                  ? Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: MaterialButton(
+                          onPressed: () async {
+                            if (controller.form.valid) {
+                              await controller.saveForm();
+                            } else {
+                              debugPrint("Error");
+                            }
+                          },
+                          height: 50,
+                          // margin: EdgeInsets.symmetric(horizontal: 50),
+                          color: Colors.blue[900],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          // decoration: BoxDecoration(
+                          // ),
+                          child: Center(
+                            child: Text(
+                              "Save".tr,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-              ),
+                    )
+                  : const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    ))
             ],
           ),
         ),
@@ -288,7 +282,7 @@ class FormItem extends StatelessWidget {
     required this.child,
   });
 
-  final DrivingLicenseController controller;
+  final CarLicenseController controller;
   final Widget child;
 
   @override
@@ -302,7 +296,7 @@ class FormItem extends StatelessWidget {
   }
 }
 
-class DrivingLicenseController extends GetxController
+class CarLicenseController extends GetxController
     with StateMixin<List<Governorate>> {
   HttpService api;
   UserInfo? user;
@@ -310,6 +304,8 @@ class DrivingLicenseController extends GetxController
   Governorate? selectedGovernate;
 
   late FocusNode _focusNode;
+
+  RxBool isBusy = false.obs;
 
   @override
   onInit() async {
@@ -340,7 +336,7 @@ class DrivingLicenseController extends GetxController
     }
   }
 
-  DrivingLicenseController() : api = Get.find<HttpService>() {
+  CarLicenseController() : api = Get.find<HttpService>() {
     // user = authService.user!.user;
     form = FormGroup({
       "government": FormControl<Governorate>(),
@@ -355,4 +351,13 @@ class DrivingLicenseController extends GetxController
     });
   }
   late FormGroup form;
+
+  Future saveForm() async {
+    isBusy.value = true;
+    // update();
+    await Future.delayed(const Duration(seconds: 2));
+    isBusy.value = false;
+    // update();
+    Get.off(() => const Home());
+  }
 }

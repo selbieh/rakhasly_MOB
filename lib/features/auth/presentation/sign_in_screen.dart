@@ -67,9 +67,7 @@ class SignInPage extends GetView<SignInController> {
                   padding: const EdgeInsets.all(30),
                   child: Column(
                     children: <Widget>[
-                      const SizedBox(
-                        height: 60,
-                      ),
+                      const SizedBox(height: 60),
                       FadeInUp(
                         duration: const Duration(milliseconds: 1400),
                         child: Container(
@@ -216,9 +214,9 @@ class LoginBtn extends StatelessWidget {
       ),
       // decoration: BoxDecoration(
       // ),
-      child: const Center(
+      child: Center(
         child: Text(
-          "Login",
+          "Login".tr,
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),

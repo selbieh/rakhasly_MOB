@@ -1,5 +1,6 @@
 import 'package:either_dart/either.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:rakshny/core/models/app_failure.dart';
 import 'package:rakshny/core/models/user.dart';
@@ -102,7 +103,12 @@ class AuthServiceImpl implements AuthService {
     if (res.statusCode == 200) {
       return Right(res.body);
     } else {
-      return Left(Failure(message: res.bodyString ?? "Error in login"));
+      return Left(Failure(message: res.bodyString ?? "Error in login".tr));
     }
+  }
+
+  @override
+  set isLoggedIn(bool logged) {
+    logged = true;
   }
 }

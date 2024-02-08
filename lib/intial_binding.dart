@@ -9,9 +9,8 @@ class RakhslyBinding implements Bindings {
 // default dependency
   @override
   void dependencies() {
-    Get.lazyPut(() => HttpService(), fenix: true);
-    Get.lazyPut<AuthService>(() => AuthServiceImpl(api: Get.find()),
-        fenix: true);
+    Get.put(HttpService(), permanent: true);
+    Get.put<AuthService>(AuthServiceImpl(api: Get.find()), permanent: true);
     Get.lazyPut(() => SignInController());
     Get.lazyPut(() => ProfileController());
   }
