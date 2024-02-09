@@ -31,8 +31,8 @@ class Languages extends Translations {
           "Save": "حفظ",
           "Welcome": "مرحبا",
           "Renew driving license": "تجديد رخصة القيادة",
-          "New driving license": "رخصة قيادة جديدة",
-          "Car driving license": "رخصة السيارة",
+          "Driving license": "رخصة القيادة ",
+          "Car license": "رخصة السيارة",
           "My requests": "طلباتي",
           "Logout": "تسجيل الخروج",
           "Delete Account": "حذف حسابي",
@@ -40,6 +40,16 @@ class Languages extends Translations {
           "1 Year": "سنة",
           "2 Year": "سنتان",
           "3 Year": "ثلاث سنوات",
+          "Renewale duration": "فترة التجديد",
+          "National ID": "البطاقة الشخصية",
+          "License Image": "صورة الرخصة",
+          "Notes": "ملاحظات",
+          "New Car": "سيارة جديدة",
+          "Settings": "الإعدادات",
+          "Open settings to allow access":
+              "الذهاب إلي الإعدادات لتمكين التطبيق من صلاحيات الوصول للصور",
+          "Photo access required": "يتطلب التطبيق الإذن للوصول إلي الصور",
+          "Add an image": "أضف صورة"
         },
       };
 }

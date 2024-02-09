@@ -12,19 +12,21 @@ import 'package:rakshny/core/models/traffics.dart';
 import 'package:rakshny/core/models/user.dart';
 import 'package:rakshny/core/services/http_service.dart';
 import 'package:rakshny/features/home/presentation/home.dart';
+import 'package:rakshny/features/license/widgets/reactive_image_picker.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:reactive_image_picker/reactive_image_picker.dart';
 
-class CarLicensePage extends GetView<CarLicenseController> {
-  const CarLicensePage({super.key});
+class DriverLicensePage extends GetView<DriverLicenseController> {
+  const DriverLicensePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Get.put(CarLicenseController());
+    Get.put(DriverLicenseController());
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       extendBody: true,
       appBar: AppBar(
-        title: Text("Car License".tr),
+        title: Text("Driver License".tr),
         leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
             onPressed: () {
@@ -119,18 +121,6 @@ class CarLicensePage extends GetView<CarLicenseController> {
                                   child: ReactiveCheckboxListTile(
                                     checkColor: Colors.white,
                                     activeColor: Colors.blue,
-                                    title: Text('Need check'.tr),
-                                    formControlName: 'needCheck',
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: FormItem(
-                                  controller: controller,
-                                  child: ReactiveCheckboxListTile(
-                                    checkColor: Colors.white,
-                                    activeColor: Colors.blue,
                                     onChanged: (formControl) {
                                       controller.form.controls['installment']
                                           ?.value = formControl.value!;
@@ -180,33 +170,6 @@ class CarLicensePage extends GetView<CarLicenseController> {
                                       ),
                                     )
                                   : const SizedBox(),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: FormItem(
-                                  controller: controller,
-                                  child: ReactiveDropdownField(
-                                      items: [
-                                        '1 Year'.tr,
-                                        '2 Year'.tr,
-                                        '3 Year'.tr
-                                      ]
-                                          .map((e) => DropdownMenuItem(
-                                                value: e,
-                                                child: Text(e),
-                                              ))
-                                          .toList(),
-                                      formControlName: 'renewaleDuration',
-                                      decoration: InputDecoration(
-                                          labelText: "Renewale duration".tr,
-                                          hintText: "Renewale duration".tr,
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 8),
-                                          hintStyle: const TextStyle(
-                                              color: Colors.grey),
-                                          border: InputBorder.none)),
-                                ),
-                              ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: FormItem(
@@ -264,47 +227,22 @@ class CarLicensePage extends GetView<CarLicenseController> {
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: FormItem(
                                   controller: controller,
-                                  child: ReactiveCheckboxListTile(
-                                    checkColor: Colors.white,
-                                    activeColor: Colors.blue,
-                                    onChanged: (formControl) async {
-                                      if (formControl.value == false) {
-                                        controller.form.controls['newCar']
-                                            ?.reset();
-                                        controller.update();
-                                      } else {
-                                        await controller.pickImageCamera();
-                                      }
-                                    },
-                                    title: Text('New Car'.tr),
-                                    formControlName: 'newCar',
+                                  child: CustomReactiveImagePicker(
+                                    formControlName: 'nationalIdImage',
+                                    label: 'National ID'.tr,
                                   ),
                                 ),
                               ),
-                              controller.form.controls['newCar']?.value !=
-                                          null &&
-                                      controller
-                                              .form.controls['newCar']?.value !=
-                                          false
-                                  ? Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .9,
-                                        height: 200,
-                                        decoration: BoxDecoration(
-                                          image: controller.image != null
-                                              ? DecorationImage(
-                                                  fit: BoxFit.fill,
-                                                  image: FileImage(
-                                                    controller.image!,
-                                                  ),
-                                                )
-                                              : null,
-                                        ),
-                                      ))
-                                  : const SizedBox(),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: FormItem(
+                                  controller: controller,
+                                  child: CustomReactiveImagePicker(
+                                    formControlName: 'licenseImage',
+                                    label: 'License Image'.tr,
+                                  ),
+                                ),
+                              ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: FormItem(
@@ -376,7 +314,7 @@ class FormItem extends StatelessWidget {
     required this.child,
   });
 
-  final CarLicenseController controller;
+  final DriverLicenseController controller;
   final Widget child;
 
   @override
@@ -390,7 +328,7 @@ class FormItem extends StatelessWidget {
   }
 }
 
-class CarLicenseController extends GetxController
+class DriverLicenseController extends GetxController
     with StateMixin<List<Governorate>> {
   HttpService api;
   UserInfo? user;
@@ -431,20 +369,18 @@ class CarLicenseController extends GetxController
     }
   }
 
-  CarLicenseController() : api = Get.find<HttpService>() {
+  DriverLicenseController() : api = Get.find<HttpService>() {
     // user = authService.user!.user;
     form = FormGroup({
       "government": FormControl<Governorate>(),
       "license_unit": FormControl<Traffics>(),
-      "needCheck": FormControl<bool>(value: false),
       "installment": FormControl<bool>(value: false),
       "installmentPlane": FormControl<String>(),
-      "renewaleDuration": FormControl<String>(),
       "date": FormControl<DateTime>(),
       "vip": FormControl<bool>(value: false),
-      "newCar": FormControl<bool>(value: false),
-      "contractImage": FormControl(),
-      "notes": FormControl(),
+      "nationalIdImage": FormControl<List<SelectedFile>>(),
+      "licenseImage": FormControl<List<SelectedFile>>(),
+      "notes": FormControl<String>(),
     });
   }
   late FormGroup form;
