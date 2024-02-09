@@ -471,6 +471,7 @@ class CarLicenseController extends GetxController
     isBusy.value = true;
     // update();
     final res = await api.saveForm(_createMultipartFormData);
+    debugPrint(res.bodyString.toString());
     await Future.delayed(const Duration(seconds: 2));
     isBusy.value = false;
     // update();
@@ -490,8 +491,8 @@ class CarLicenseController extends GetxController
       "contract": form.control('contract').value,
       "contractImage": image != null
           ? MultipartFile(
-              image?.path, // Replace with the actual path to your image
-              filename: "contract_image",
+              image?.path,
+              filename: image?.path.split("/").last ?? "Image.jpg",
             )
           : null,
     });
