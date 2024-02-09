@@ -10,7 +10,7 @@ class HttpService extends GetConnect {
     httpClient.addRequestModifier<dynamic>((request) {
       final auth = Get.find<AuthService>();
       if (auth.isLoggedIn) {
-        request.headers['Authorization'] = "${auth.user?.access}";
+        request.headers['Authorization'] = "Bearer ${auth.user?.access}";
       }
       return request;
     });

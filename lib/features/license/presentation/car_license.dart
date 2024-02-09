@@ -119,6 +119,16 @@ class CarLicensePage extends GetView<CarLicenseController> {
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: FormItem(
                                   controller: controller,
+                                  child: CustomReactiveImagePicker(
+                                    formControlName: 'national_id_image',
+                                    label: 'National ID'.tr,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: FormItem(
+                                  controller: controller,
                                   child: ReactiveCheckboxListTile(
                                     checkColor: Colors.white,
                                     activeColor: Colors.blue,
@@ -411,6 +421,7 @@ class CarLicenseController extends GetxController
       "newCar": FormControl<bool>(value: false),
       "contract": FormControl<List<SelectedFile>>(),
       "license_id_image": FormControl<List<SelectedFile>>(),
+      "national_id_image": FormControl<List<SelectedFile>>(),
       "notes": FormControl(),
     });
   }
@@ -439,9 +450,21 @@ class CarLicenseController extends GetxController
     var formDataBody = _createMultipartFormData();
     final res = await api.saveForm(formDataBody);
     debugPrint(res.bodyString.toString());
-    if (res.statusCode == 200) {
+    if (res.statusCode == 201) {
+      isBusy.value = false;
+      update();
+      await AwesomeDialog(
+              context: context,
+              dialogType: DialogType.success,
+              animType: AnimType.bottomSlide,
+              desc: "Done".tr,
+              descTextStyle:
+                  const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
+          .show();
       Get.off(() => const Home());
     } else {
+      isBusy.value = false;
+      update();
       AwesomeDialog(
               context: context,
               dialogType: DialogType.error,
@@ -451,16 +474,16 @@ class CarLicenseController extends GetxController
                   const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
           .show();
     }
-    isBusy.value = false;
-    update();
   }
 
   FormData _createMultipartFormData() {
     return FormData({
       "government": (form.control('government').value as Governorate).id,
-      "license_unit": (form.control('license_unit').value as Traffics).id,
+      "licensing_unit": (form.control('license_unit').value as Traffics).id,
       "needCheck": form.control('needCheck').value.toString(),
       "installment": form.control('installment').value.toString(),
+      "renewal_duration":
+          form.control('renewaleDuration').value.toString().split(" ")[0],
       "visit_date": form.control('date').value.toString(),
       "vip_assistance": form.control('vip').value.toString(),
       "newCar": form.control('newCar').value.toString(),
@@ -477,6 +500,20 @@ class CarLicenseController extends GetxController
                           .split("/")
                           .last ??
                       "Image.jpg",
+            )
+          : null,
+      "national_id_image": form.control('national_id_image').value != null
+          ? MultipartFile(
+              (form.control('national_id_image').value as List<SelectedFile>)[0]
+                  .file
+                  ?.path,
+              filename: (form.control('national_id_image').value
+                          as List<SelectedFile>)[0]
+                      .file
+                      ?.path
+                      .split("/")
+                      .last ??
+                  "Image.jpg",
             )
           : null,
       "license_id_image": form.control('license_id_image').value != null

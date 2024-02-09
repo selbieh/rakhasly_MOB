@@ -52,6 +52,7 @@ class Languages extends Translations {
           "Add an image": "أضف صورة",
           "Driver License": "رخصة القيادة",
           "Error in forget password": "خطأ في استرجاع الرقم السري",
+          "Done": "تم"
         },
       };
 }

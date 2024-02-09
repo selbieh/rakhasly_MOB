@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rakshny/core/models/user.dart';
 import 'package:rakshny/core/services/auth/I_auth_service.dart';
+import 'package:rakshny/features/auth/presentation/sign_in_screen.dart';
 import 'package:rakshny/features/home/presentation/home.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:animate_do/animate_do.dart';
@@ -109,10 +110,13 @@ class ForgetPasswordScreen extends GetView<ForgetPasswordController> {
                         },
                         onEmpty: FadeInUp(
                             duration: const Duration(milliseconds: 1600),
-                            child: ConfirmBtn(controller: controller)),
+                            child: ConfirmBtn(
+                              controller: controller,
+                              ctx: context,
+                            )),
                         onError: (error) => Column(
                           children: [
-                            ConfirmBtn(controller: controller),
+                            ConfirmBtn(controller: controller, ctx: context),
                             const SizedBox(height: 20),
                             Text(error ?? "Error".tr,
                                 style: const TextStyle(color: Colors.red)),
@@ -137,8 +141,10 @@ class ConfirmBtn extends StatelessWidget {
   const ConfirmBtn({
     super.key,
     required this.controller,
+    required this.ctx,
   });
 
+  final BuildContext ctx;
   final ForgetPasswordController controller;
 
   @override
@@ -149,7 +155,7 @@ class ConfirmBtn extends StatelessWidget {
         if (controller.form.valid) {
           FocusManager.instance.primaryFocus?.unfocus();
 
-          await controller.forgetPassword(context);
+          await controller.forgetPassword(ctx);
         } else {
           debugPrint("Error");
         }
@@ -191,14 +197,15 @@ class ForgetPasswordController extends GetxController with StateMixin<bool> {
     res.fold((left) {
       change(false, status: RxStatus.error(left.message));
     }, (right) async {
-      var res = right;
-      AwesomeDialog(
+      var res = right as Map;
+      var resVal = res['detail'];
+      change(true, status: RxStatus.success());
+      await AwesomeDialog(
               context: context,
-              desc: right['detail'] ?? "Done".tr,
+              desc: resVal ?? "Done".tr,
               dialogType: DialogType.success)
           .show();
-      change(true, status: RxStatus.success());
-      Get.offAll(const Home());
+      Get.offAll(() => const SignInPage());
     });
   }
 }

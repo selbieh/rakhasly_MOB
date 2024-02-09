@@ -274,6 +274,7 @@ class DriverLicensePage extends GetView<DriverLicenseController> {
                               await controller.saveForm(context);
                             } else {
                               debugPrint("Error");
+                              controller.form.markAllAsTouched();
                             }
                           },
                           height: 50,
@@ -372,14 +373,15 @@ class DriverLicenseController extends GetxController
   DriverLicenseController() : api = Get.find<HttpService>() {
     // user = authService.user!.user;
     form = FormGroup({
-      "government": FormControl<Governorate>(),
-      "license_unit": FormControl<Traffics>(),
+      "government": FormControl<Governorate>(validators: [Validators.required]),
+      "license_unit": FormControl<Traffics>(validators: [Validators.required]),
       "installment": FormControl<bool>(value: false),
-      "installmentPlane": FormControl<String>(),
-      "date": FormControl<DateTime>(),
+      "date": FormControl<DateTime>(validators: [Validators.required]),
       "vip": FormControl<bool>(value: false),
-      "nationalIdImage": FormControl<List<SelectedFile>>(),
-      "licenseImage": FormControl<List<SelectedFile>>(),
+      "nationalIdImage":
+          FormControl<List<SelectedFile>>(validators: [Validators.required]),
+      "licenseImage":
+          FormControl<List<SelectedFile>>(validators: [Validators.required]),
       "notes": FormControl<String>(),
     });
   }
@@ -407,9 +409,17 @@ class DriverLicenseController extends GetxController
     isBusy.value = true;
     // update();
     var formDataBody = _createMultipartFormData();
-    final res = await api.saveForm(formDataBody);
+    final res = await api.saveDriverForm(formDataBody);
     debugPrint(res.bodyString.toString());
-    if (res.statusCode == 200) {
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      await AwesomeDialog(
+              context: context,
+              dialogType: DialogType.success,
+              animType: AnimType.bottomSlide,
+              desc: "Done".tr,
+              descTextStyle:
+                  const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
+          .show();
       Get.off(() => const Home());
     } else {
       AwesomeDialog(
