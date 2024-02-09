@@ -49,7 +49,9 @@ class Languages extends Translations {
           "Open settings to allow access":
               "الذهاب إلي الإعدادات لتمكين التطبيق من صلاحيات الوصول للصور",
           "Photo access required": "يتطلب التطبيق الإذن للوصول إلي الصور",
-          "Add an image": "أضف صورة"
+          "Add an image": "أضف صورة",
+          "Driver License": "رخصة القيادة",
+          "Error in forget password": "خطأ في استرجاع الرقم السري",
         },
       };
 }

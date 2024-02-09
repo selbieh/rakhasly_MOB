@@ -15,6 +15,9 @@ abstract class AuthService {
   Future<bool> saveUser({required User user});
 
   Future<User?> loadUser();
+
+  Future forgetPassword({required Map<String, dynamic> body});
+
   Future<bool> isAuthiticatedUser();
 
   Future<bool> removeUser();

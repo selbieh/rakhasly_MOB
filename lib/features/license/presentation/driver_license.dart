@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:rakshny/core/constants.dart';
 import 'package:rakshny/core/models/governorate.dart';
 import 'package:rakshny/core/models/traffics.dart';
 import 'package:rakshny/core/models/user.dart';
@@ -137,39 +137,39 @@ class DriverLicensePage extends GetView<DriverLicenseController> {
                                   ),
                                 ),
                               ),
-                              controller.form.controls['installment']?.value !=
-                                          null &&
-                                      controller.form.controls['installment']
-                                              ?.value ==
-                                          true
-                                  ? Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: FormItem(
-                                        controller: controller,
-                                        child: ReactiveDropdownField(
-                                            items: [
-                                              '1 Year'.tr,
-                                              '2 Year'.tr,
-                                              '3 Year'.tr
-                                            ]
-                                                .map((e) => DropdownMenuItem(
-                                                      value: e,
-                                                      child: Text(e),
-                                                    ))
-                                                .toList(),
-                                            formControlName: 'installmentPlane',
-                                            decoration: InputDecoration(
-                                                labelText: "Installment".tr,
-                                                hintText: "Installment".tr,
-                                                contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8),
-                                                hintStyle: const TextStyle(
-                                                    color: Colors.grey),
-                                                border: InputBorder.none)),
-                                      ),
-                                    )
-                                  : const SizedBox(),
+                              // controller.form.controls['installment']?.value !=
+                              //             null &&
+                              //         controller.form.controls['installment']
+                              //                 ?.value ==
+                              //             true
+                              //     ? Padding(
+                              //         padding: const EdgeInsets.only(top: 8.0),
+                              //         child: FormItem(
+                              //           controller: controller,
+                              //           child: ReactiveDropdownField(
+                              //               items: [
+                              //                 '1 Year'.tr,
+                              //                 '2 Year'.tr,
+                              //                 '3 Year'.tr
+                              //               ]
+                              //                   .map((e) => DropdownMenuItem(
+                              //                         value: e,
+                              //                         child: Text(e),
+                              //                       ))
+                              //                   .toList(),
+                              //               formControlName: 'installmentPlane',
+                              //               decoration: InputDecoration(
+                              //                   labelText: "Installment".tr,
+                              //                   hintText: "Installment".tr,
+                              //                   contentPadding:
+                              //                       const EdgeInsets.symmetric(
+                              //                           horizontal: 8),
+                              //                   hintStyle: const TextStyle(
+                              //                       color: Colors.grey),
+                              //                   border: InputBorder.none)),
+                              //         ),
+                              //       )
+                              //     : const SizedBox(),
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: FormItem(
@@ -271,7 +271,7 @@ class DriverLicensePage extends GetView<DriverLicenseController> {
                         child: MaterialButton(
                           onPressed: () async {
                             if (controller.form.valid) {
-                              await controller.saveForm();
+                              await controller.saveForm(context);
                             } else {
                               debugPrint("Error");
                             }
@@ -402,32 +402,62 @@ class DriverLicenseController extends GetxController
     }
   }
 
-  Future saveForm() async {
+  Future saveForm(context) async {
     debugPrint(form.value.toString());
     isBusy.value = true;
     // update();
-    final res = await api.saveForm(_createMultipartFormData);
-    await Future.delayed(const Duration(seconds: 2));
+    var formDataBody = _createMultipartFormData();
+    final res = await api.saveForm(formDataBody);
+    debugPrint(res.bodyString.toString());
+    if (res.statusCode == 200) {
+      Get.off(() => const Home());
+    } else {
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.error,
+              animType: AnimType.bottomSlide,
+              desc: res.bodyString,
+              descTextStyle:
+                  const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
+          .show();
+    }
     isBusy.value = false;
-    // update();
-    Get.off(() => const Home());
+    update();
   }
 
   FormData _createMultipartFormData() {
     return FormData({
-      "government": form.control('government').value,
-      "license_unit": form.control('license_unit').value,
-      "needCheck": form.control('needCheck').value.toString(),
+      "government": (form.control('government').value as Governorate).id,
+      "licensing_unit": (form.control('license_unit').value as Traffics).id,
       "installment": form.control('installment').value.toString(),
-      "installmentPlane": form.control('installmentPlane').value,
-      "date": form.control('date').value.toString(),
-      "vip": form.control('vip').value.toString(),
-      "newCar": form.control('newCar').value.toString(),
-      "contract": form.control('contract').value,
-      "contractImage": image != null
+      "visit_date": form.control('date').value.toString(),
+      "vip_assistance": form.control('vip').value.toString(),
+      "license_id_image": form.control('licenseImage').value != null
           ? MultipartFile(
-              image?.path, // Replace with the actual path to your image
-              filename: "contract_image",
+              (form.control('licenseImage').value as List<SelectedFile>)[0]
+                  .file
+                  ?.path,
+              filename:
+                  (form.control('licenseImage').value as List<SelectedFile>)[0]
+                          .file
+                          ?.path
+                          .split("/")
+                          .last ??
+                      "Image.jpg",
+            )
+          : null,
+      "national_id_image": form.control('nationalIdImage').value != null
+          ? MultipartFile(
+              (form.control('nationalIdImage').value as List<SelectedFile>)[0]
+                  .file
+                  ?.path,
+              filename: (form.control('nationalIdImage').value
+                          as List<SelectedFile>)[0]
+                      .file
+                      ?.path
+                      .split("/")
+                      .last ??
+                  "Image.jpg",
             )
           : null,
     });

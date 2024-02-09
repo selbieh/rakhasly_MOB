@@ -1,18 +1,18 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rakshny/core/models/user.dart';
 import 'package:rakshny/core/services/auth/I_auth_service.dart';
-import 'package:rakshny/features/auth/presentation/forget_password_screen.dart';
 import 'package:rakshny/features/home/presentation/home.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:animate_do/animate_do.dart';
 
-class SignInPage extends GetView<SignInController> {
-  const SignInPage({super.key});
+class ForgetPasswordScreen extends GetView<ForgetPasswordController> {
+  const ForgetPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Get.put(SignInController());
+    Get.put(ForgetPasswordController());
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -40,20 +40,13 @@ class SignInPage extends GetView<SignInController> {
                     FadeInUp(
                         duration: const Duration(milliseconds: 1000),
                         child: Text(
-                          "Login".tr,
+                          "Forget Password".tr,
                           style: const TextStyle(
                               color: Colors.white, fontSize: 40),
                         )),
                     const SizedBox(
                       height: 10,
                     ),
-                    FadeInUp(
-                        duration: const Duration(milliseconds: 1300),
-                        child: Text(
-                          "Welcome Back".tr,
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 18),
-                        )),
                   ],
                 ),
               ),
@@ -100,29 +93,6 @@ class SignInPage extends GetView<SignInController> {
                                         border: InputBorder.none),
                                   ),
                                 ),
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                              color: Colors.grey.shade200))),
-                                  child: ReactiveTextField(
-                                    formControlName: 'password',
-                                    obscureText: true,
-                                    showErrors: (control) =>
-                                        control.invalid &&
-                                        control.touched &&
-                                        control.dirty,
-                                    // showErrors: (control) =>
-                                    //     control.hasErrors &&
-                                    //     (control.value?.isBlank ?? false),
-                                    decoration: const InputDecoration(
-                                        hintText: "Password",
-                                        hintStyle:
-                                            TextStyle(color: Colors.grey),
-                                        border: InputBorder.none),
-                                  ),
-                                ),
                               ],
                             ),
                           ),
@@ -130,18 +100,6 @@ class SignInPage extends GetView<SignInController> {
                       ),
                       const SizedBox(
                         height: 40,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          debugPrint("Forget Password");
-                          Get.to(const ForgetPasswordScreen());
-                        },
-                        child: FadeInUp(
-                            duration: const Duration(milliseconds: 1500),
-                            child: Text(
-                              "Forgot Password?".tr,
-                              style: const TextStyle(color: Colors.grey),
-                            )),
                       ),
                       const SizedBox(height: 30),
                       controller.obx(
@@ -151,10 +109,10 @@ class SignInPage extends GetView<SignInController> {
                         },
                         onEmpty: FadeInUp(
                             duration: const Duration(milliseconds: 1600),
-                            child: LoginBtn(controller: controller)),
+                            child: ConfirmBtn(controller: controller)),
                         onError: (error) => Column(
                           children: [
-                            LoginBtn(controller: controller),
+                            ConfirmBtn(controller: controller),
                             const SizedBox(height: 20),
                             Text(error ?? "Error".tr,
                                 style: const TextStyle(color: Colors.red)),
@@ -163,18 +121,6 @@ class SignInPage extends GetView<SignInController> {
                         onLoading: const CircularProgressIndicator(),
                       ),
                       const SizedBox(height: 30),
-                      GestureDetector(
-                        onTap: () {
-                          debugPrint("Guest");
-                          Get.off(() => const Home());
-                        },
-                        child: FadeInUp(
-                            duration: const Duration(milliseconds: 1500),
-                            child: Text(
-                              "Login as a guest".tr,
-                              style: TextStyle(color: Colors.grey),
-                            )),
-                      ),
                     ],
                   ),
                 ),
@@ -187,13 +133,13 @@ class SignInPage extends GetView<SignInController> {
   }
 }
 
-class LoginBtn extends StatelessWidget {
-  const LoginBtn({
+class ConfirmBtn extends StatelessWidget {
+  const ConfirmBtn({
     super.key,
     required this.controller,
   });
 
-  final SignInController controller;
+  final ForgetPasswordController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -203,7 +149,7 @@ class LoginBtn extends StatelessWidget {
         if (controller.form.valid) {
           FocusManager.instance.primaryFocus?.unfocus();
 
-          await controller.signIn();
+          await controller.forgetPassword(context);
         } else {
           debugPrint("Error");
         }
@@ -218,7 +164,7 @@ class LoginBtn extends StatelessWidget {
       // ),
       child: Center(
         child: Text(
-          "Login".tr,
+          "Confirm".tr,
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
@@ -226,14 +172,10 @@ class LoginBtn extends StatelessWidget {
   }
 }
 
-class SignInController extends GetxController with StateMixin<bool> {
+class ForgetPasswordController extends GetxController with StateMixin<bool> {
   FormGroup form = FormGroup({
     'email': FormControl<String>(
-        value: "admin@admin.com",
         validators: [Validators.required, Validators.email]),
-    'password': FormControl<String>(
-        value: 'admon@123',
-        validators: [Validators.required, Validators.minLength(8)])
   });
 
   @override
@@ -242,15 +184,19 @@ class SignInController extends GetxController with StateMixin<bool> {
     change(false, status: RxStatus.empty());
   }
 
-  Future signIn() async {
+  Future forgetPassword(context) async {
     final authService = Get.find<AuthService>();
     change(null, status: RxStatus.loading());
-    var res = await authService.login(body: form.value);
+    var res = await authService.forgetPassword(body: form.value);
     res.fold((left) {
       change(false, status: RxStatus.error(left.message));
     }, (right) async {
-      var user = User.fromJson(right);
-      await authService.saveUser(user: user);
+      var res = right;
+      AwesomeDialog(
+              context: context,
+              desc: right['detail'] ?? "Done".tr,
+              dialogType: DialogType.success)
+          .show();
       change(true, status: RxStatus.success());
       Get.offAll(const Home());
     });

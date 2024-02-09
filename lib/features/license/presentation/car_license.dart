@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -12,7 +13,9 @@ import 'package:rakshny/core/models/traffics.dart';
 import 'package:rakshny/core/models/user.dart';
 import 'package:rakshny/core/services/http_service.dart';
 import 'package:rakshny/features/home/presentation/home.dart';
+import 'package:rakshny/features/license/widgets/reactive_image_picker.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:reactive_image_picker/reactive_image_picker.dart';
 
 class CarLicensePage extends GetView<CarLicenseController> {
   const CarLicensePage({super.key});
@@ -147,39 +150,6 @@ class CarLicensePage extends GetView<CarLicenseController> {
                                   ),
                                 ),
                               ),
-                              controller.form.controls['installment']?.value !=
-                                          null &&
-                                      controller.form.controls['installment']
-                                              ?.value ==
-                                          true
-                                  ? Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: FormItem(
-                                        controller: controller,
-                                        child: ReactiveDropdownField(
-                                            items: [
-                                              '1 Year'.tr,
-                                              '2 Year'.tr,
-                                              '3 Year'.tr
-                                            ]
-                                                .map((e) => DropdownMenuItem(
-                                                      value: e,
-                                                      child: Text(e),
-                                                    ))
-                                                .toList(),
-                                            formControlName: 'installmentPlane',
-                                            decoration: InputDecoration(
-                                                labelText: "Installment".tr,
-                                                hintText: "Installment".tr,
-                                                contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8),
-                                                hintStyle: const TextStyle(
-                                                    color: Colors.grey),
-                                                border: InputBorder.none)),
-                                      ),
-                                    )
-                                  : const SizedBox(),
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: FormItem(
@@ -268,13 +238,9 @@ class CarLicensePage extends GetView<CarLicenseController> {
                                     checkColor: Colors.white,
                                     activeColor: Colors.blue,
                                     onChanged: (formControl) async {
-                                      if (formControl.value == false) {
-                                        controller.form.controls['newCar']
-                                            ?.reset();
-                                        controller.update();
-                                      } else {
-                                        await controller.pickImageCamera();
-                                      }
+                                      controller.form.controls['newCar']
+                                          ?.value = formControl.value;
+                                      controller.update();
                                     },
                                     title: Text('New Car'.tr),
                                     formControlName: 'newCar',
@@ -284,27 +250,27 @@ class CarLicensePage extends GetView<CarLicenseController> {
                               controller.form.controls['newCar']?.value !=
                                           null &&
                                       controller
-                                              .form.controls['newCar']?.value !=
-                                          false
+                                              .form.controls['newCar']?.value ==
+                                          true
                                   ? Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .9,
-                                        height: 200,
-                                        decoration: BoxDecoration(
-                                          image: controller.image != null
-                                              ? DecorationImage(
-                                                  fit: BoxFit.fill,
-                                                  image: FileImage(
-                                                    controller.image!,
-                                                  ),
-                                                )
-                                              : null,
-                                        ),
-                                      ))
-                                  : const SizedBox(),
+                                      padding: const EdgeInsets.only(top: 8),
+                                      child: FormItem(
+                                        controller: controller,
+                                        child: CustomReactiveImagePicker(
+                                            label: "Contract".tr,
+                                            formControlName: 'contract'),
+                                      ),
+                                    )
+                                  : Padding(
+                                      padding: const EdgeInsets.only(top: 8),
+                                      child: FormItem(
+                                        controller: controller,
+                                        child: CustomReactiveImagePicker(
+                                            label: "License ID".tr,
+                                            formControlName:
+                                                'license_id_image'),
+                                      ),
+                                    ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: FormItem(
@@ -333,7 +299,7 @@ class CarLicensePage extends GetView<CarLicenseController> {
                         child: MaterialButton(
                           onPressed: () async {
                             if (controller.form.valid) {
-                              await controller.saveForm();
+                              await controller.saveForm(context);
                             } else {
                               debugPrint("Error");
                             }
@@ -438,63 +404,95 @@ class CarLicenseController extends GetxController
       "license_unit": FormControl<Traffics>(),
       "needCheck": FormControl<bool>(value: false),
       "installment": FormControl<bool>(value: false),
-      "installmentPlane": FormControl<String>(),
+      // "installmentPlane": FormControl<String>(),
       "renewaleDuration": FormControl<String>(),
       "date": FormControl<DateTime>(),
       "vip": FormControl<bool>(value: false),
       "newCar": FormControl<bool>(value: false),
-      "contractImage": FormControl(),
+      "contract": FormControl<List<SelectedFile>>(),
+      "license_id_image": FormControl<List<SelectedFile>>(),
       "notes": FormControl(),
     });
   }
   late FormGroup form;
 
-  Future pickImageCamera() async {
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-      final imageTemp = File(image.path);
-      this.image = imageTemp;
+  // Future pickImageCamera() async {
+  //   try {
+  //     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+  //     if (image == null) return;
+  //     final imageTemp = File(image.path);
+  //     this.image = imageTemp;
 
-      form.controls['newCar']?.value = true;
-      form.controls['contractImage']?.value = imageTemp;
+  //     form.controls['newCar']?.value = true;
+  //     form.controls['contractImage']?.value = imageTemp;
 
-      update();
-      // form.controls['contractImage']?.value = this.image;
-    } on PlatformException catch (e) {
-      debugPrint('Failed to pick image: $e');
-    }
-  }
+  //     update();
+  //     // form.controls['contractImage']?.value = this.image;
+  //   } on PlatformException catch (e) {
+  //     debugPrint('Failed to pick image: $e');
+  //   }
+  // }
 
-  Future saveForm() async {
+  Future saveForm(context) async {
     debugPrint(form.value.toString());
     isBusy.value = true;
-    // update();
-    final res = await api.saveForm(_createMultipartFormData);
+    var formDataBody = _createMultipartFormData();
+    final res = await api.saveForm(formDataBody);
     debugPrint(res.bodyString.toString());
-    await Future.delayed(const Duration(seconds: 2));
+    if (res.statusCode == 200) {
+      Get.off(() => const Home());
+    } else {
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.error,
+              animType: AnimType.bottomSlide,
+              desc: res.bodyString,
+              descTextStyle:
+                  const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
+          .show();
+    }
     isBusy.value = false;
-    // update();
-    Get.off(() => const Home());
+    update();
   }
 
   FormData _createMultipartFormData() {
     return FormData({
-      "government": form.control('government').value,
-      "license_unit": form.control('license_unit').value,
+      "government": (form.control('government').value as Governorate).id,
+      "license_unit": (form.control('license_unit').value as Traffics).id,
       "needCheck": form.control('needCheck').value.toString(),
       "installment": form.control('installment').value.toString(),
-      "installmentPlane": form.control('installmentPlane').value,
-      "date": form.control('date').value.toString(),
-      "vip": form.control('vip').value.toString(),
+      "visit_date": form.control('date').value.toString(),
+      "vip_assistance": form.control('vip').value.toString(),
       "newCar": form.control('newCar').value.toString(),
-      "contract": form.control('contract').value,
-      "contractImage": image != null
+      "contract": form.control('newCar').value == true &&
+              form.control('contract').value != null
           ? MultipartFile(
-              image?.path,
-              filename: image?.path.split("/").last ?? "Image.jpg",
+              (form.control('contract').value as List<SelectedFile>)[0]
+                  .file
+                  ?.path,
+              filename:
+                  (form.control('contract').value as List<SelectedFile>)[0]
+                          .file
+                          ?.path
+                          .split("/")
+                          .last ??
+                      "Image.jpg",
             )
           : null,
+      "license_id_image": form.control('license_id_image').value != null
+          ? MultipartFile(
+              (form.control('license_id_image').value as List<SelectedFile>)[0]
+                  .file
+                  ?.path,
+              filename: (form.control('license_id_image').value
+                          as List<SelectedFile>)[0]
+                      .file
+                      ?.path
+                      .split("/")
+                      .last ??
+                  "Image.jpg",
+            )
+          : null
     });
   }
 }

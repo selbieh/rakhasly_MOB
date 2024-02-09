@@ -111,4 +111,15 @@ class AuthServiceImpl implements AuthService {
   set isLoggedIn(bool logged) {
     logged = true;
   }
+
+  @override
+  Future forgetPassword({required Map<String, dynamic> body}) async {
+    var res = await api.forgetPassword(body);
+    if (res.statusCode == 200) {
+      return Right(res.body);
+    } else {
+      return Left(
+          Failure(message: res.bodyString ?? "Error in forget password".tr));
+    }
+  }
 }
