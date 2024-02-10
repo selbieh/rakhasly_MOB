@@ -41,7 +41,6 @@ dependencies:
   animate_do: ^3.3.2
   either_dart: ^1.0.0
   get_storage: ^2.1.1
-  image_picker: ^1.0.7
   reactive_image_picker: ^5.0.0
   app_settings: ^5.0.0
   awesome_dialog: ^3.2.0

@@ -122,4 +122,15 @@ class AuthServiceImpl implements AuthService {
           Failure(message: res.bodyString ?? "Error in forget password".tr));
     }
   }
+
+  @override
+  Future<Either<Failure, dynamic>> signUp(
+      {required Map<String, dynamic> body}) async {
+    var res = await api.signUp(body);
+    if (res.statusCode == 201) {
+      return Right(res.body);
+    } else {
+      return Left(Failure(message: res.bodyString ?? "Error in signUp".tr));
+    }
+  }
 }

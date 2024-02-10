@@ -1,19 +1,18 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rakshny/core/models/user.dart';
 import 'package:rakshny/core/services/auth/I_auth_service.dart';
-import 'package:rakshny/features/auth/presentation/forget_password_screen.dart';
-import 'package:rakshny/features/auth/presentation/sign_up_screen.dart';
 import 'package:rakshny/features/home/presentation/home.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:animate_do/animate_do.dart';
 
-class SignInPage extends GetView<SignInController> {
-  const SignInPage({super.key});
+class SignUpPage extends GetView<SignUpController> {
+  const SignUpPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Get.put(SignInController());
+    Get.put(SignUpController());
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -41,7 +40,7 @@ class SignInPage extends GetView<SignInController> {
                     FadeInUp(
                         duration: const Duration(milliseconds: 1000),
                         child: Text(
-                          "Login".tr,
+                          "Registeration".tr,
                           style: const TextStyle(
                               color: Colors.white, fontSize: 40),
                         )),
@@ -51,7 +50,7 @@ class SignInPage extends GetView<SignInController> {
                     FadeInUp(
                         duration: const Duration(milliseconds: 1300),
                         child: Text(
-                          "Welcome Back".tr,
+                          "Welcome".tr,
                           style: const TextStyle(
                               color: Colors.white, fontSize: 18),
                         )),
@@ -93,11 +92,11 @@ class SignInPage extends GetView<SignInController> {
                                           bottom: BorderSide(
                                               color: Colors.grey.shade200))),
                                   child: ReactiveTextField(
-                                    formControlName: 'email',
-                                    decoration: const InputDecoration(
-                                        hintText: "Email",
+                                    formControlName: 'username',
+                                    decoration: InputDecoration(
+                                        hintText: "Name".tr,
                                         hintStyle:
-                                            TextStyle(color: Colors.grey),
+                                            const TextStyle(color: Colors.grey),
                                         border: InputBorder.none),
                                   ),
                                 ),
@@ -108,19 +107,63 @@ class SignInPage extends GetView<SignInController> {
                                           bottom: BorderSide(
                                               color: Colors.grey.shade200))),
                                   child: ReactiveTextField(
-                                    formControlName: 'password',
+                                    formControlName: 'email',
+                                    decoration: InputDecoration(
+                                        hintText: "Email".tr,
+                                        hintStyle:
+                                            const TextStyle(color: Colors.grey),
+                                        border: InputBorder.none),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              color: Colors.grey.shade200))),
+                                  child: ReactiveTextField(
+                                    formControlName: 'phone',
+                                    keyboardType: TextInputType.phone,
+                                    decoration: InputDecoration(
+                                        hintText: "Phone Number".tr,
+                                        hintStyle:
+                                            const TextStyle(color: Colors.grey),
+                                        border: InputBorder.none),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              color: Colors.grey.shade200))),
+                                  child: ReactiveTextField(
+                                    formControlName: 'password1',
                                     obscureText: true,
                                     showErrors: (control) =>
                                         control.invalid &&
                                         control.touched &&
                                         control.dirty,
-                                    // showErrors: (control) =>
-                                    //     control.hasErrors &&
-                                    //     (control.value?.isBlank ?? false),
-                                    decoration: const InputDecoration(
-                                        hintText: "Password",
+                                    decoration: InputDecoration(
+                                        hintText: "Password".tr,
                                         hintStyle:
-                                            TextStyle(color: Colors.grey),
+                                            const TextStyle(color: Colors.grey),
+                                        border: InputBorder.none),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              color: Colors.grey.shade200))),
+                                  child: ReactiveTextField(
+                                    obscureText: true,
+                                    formControlName: 'password2',
+                                    decoration: InputDecoration(
+                                        hintText: "Confirm Password".tr,
+                                        hintStyle:
+                                            const TextStyle(color: Colors.grey),
                                         border: InputBorder.none),
                                   ),
                                 ),
@@ -132,19 +175,6 @@ class SignInPage extends GetView<SignInController> {
                       const SizedBox(
                         height: 40,
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          debugPrint("Forget Password");
-                          Get.to(const ForgetPasswordScreen());
-                        },
-                        child: FadeInUp(
-                            duration: const Duration(milliseconds: 1500),
-                            child: Text(
-                              "Forgot Password?".tr,
-                              style: const TextStyle(color: Colors.grey),
-                            )),
-                      ),
-                      const SizedBox(height: 30),
                       controller.obx(
                         (state) {
                           debugPrint("Logged in");
@@ -152,28 +182,22 @@ class SignInPage extends GetView<SignInController> {
                         },
                         onEmpty: FadeInUp(
                             duration: const Duration(milliseconds: 1600),
-                            child: LoginBtn(controller: controller)),
-                        onError: (error) => Column(
-                          children: [
-                            LoginBtn(controller: controller),
-                            const SizedBox(height: 20),
-                            Text(error ?? "Error".tr,
-                                style: const TextStyle(color: Colors.red)),
-                          ],
-                        ),
-                        onLoading: const CircularProgressIndicator(),
-                      ),
-                      const SizedBox(height: 30),
-                      GestureDetector(
-                        onTap: () {
-                          Get.to(() => const SignUpPage());
-                        },
-                        child: FadeInUp(
-                            duration: const Duration(milliseconds: 1500),
-                            child: Text(
-                              "Registeration".tr,
-                              style: const TextStyle(color: Colors.grey),
+                            child: LoginBtn(
+                              controller: controller,
+                              ctx: context,
                             )),
+                        // onError: (error) => Column(
+                        //   children: [
+                        //     LoginBtn(
+                        //       controller: controller,
+                        //       ctx: context,
+                        //     ),
+                        //     const SizedBox(height: 20),
+                        //     Text(error ?? "Error".tr,
+                        //         style: const TextStyle(color: Colors.red)),
+                        //   ],
+                        // ),
+                        onLoading: const CircularProgressIndicator(),
                       ),
                       const SizedBox(height: 30),
                       GestureDetector(
@@ -185,7 +209,7 @@ class SignInPage extends GetView<SignInController> {
                             duration: const Duration(milliseconds: 1500),
                             child: Text(
                               "Login as a guest".tr,
-                              style: TextStyle(color: Colors.grey),
+                              style: const TextStyle(color: Colors.grey),
                             )),
                       ),
                     ],
@@ -204,9 +228,11 @@ class LoginBtn extends StatelessWidget {
   const LoginBtn({
     super.key,
     required this.controller,
+    required this.ctx,
   });
 
-  final SignInController controller;
+  final SignUpController controller;
+  final BuildContext ctx;
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +242,7 @@ class LoginBtn extends StatelessWidget {
         if (controller.form.valid) {
           FocusManager.instance.primaryFocus?.unfocus();
 
-          await controller.signIn();
+          await controller.signUp(ctx);
         } else {
           debugPrint("Error");
         }
@@ -231,23 +257,33 @@ class LoginBtn extends StatelessWidget {
       // ),
       child: Center(
         child: Text(
-          "Login".tr,
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          "Sign Up".tr,
+          style:
+              const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
 }
 
-class SignInController extends GetxController with StateMixin<bool> {
+class SignUpController extends GetxController with StateMixin<bool> {
   FormGroup form = FormGroup({
+    'username': FormControl<String>(validators: [Validators.required]),
     'email': FormControl<String>(
-        value: "admin@admin.com",
         validators: [Validators.required, Validators.email]),
-    'password': FormControl<String>(
-        value: 'admon@123',
-        validators: [Validators.required, Validators.minLength(8)])
-  });
+    'phone': FormControl<String>(validators: [
+      Validators.required,
+      Validators.maxLength(13),
+      Validators.minLength(13),
+      Validators.pattern(r'^\+20[0-9]{10}$')
+    ]),
+    'password1': FormControl<String>(
+        validators: [Validators.required, Validators.minLength(8)]),
+    'password2': FormControl<String>(
+        validators: [Validators.required, Validators.minLength(8)]),
+  }, validators: [
+    const MustMatchValidator('password1', 'password2', true)
+  ]);
 
   @override
   onInit() {
@@ -255,12 +291,17 @@ class SignInController extends GetxController with StateMixin<bool> {
     change(false, status: RxStatus.empty());
   }
 
-  Future signIn() async {
+  Future signUp(context) async {
     final authService = Get.find<AuthService>();
     change(null, status: RxStatus.loading());
-    var res = await authService.login(body: form.value);
-    res.fold((left) {
-      change(false, status: RxStatus.error(left.message));
+    var res = await authService.signUp(body: form.value);
+    res.fold((left) async {
+      change(false, status: RxStatus.empty());
+      await AwesomeDialog(
+              context: context,
+              dialogType: DialogType.error,
+              desc: left.message)
+          .show();
     }, (right) async {
       var user = User.fromJson(right);
       await authService.saveUser(user: user);

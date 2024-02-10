@@ -52,7 +52,15 @@ class Languages extends Translations {
           "Add an image": "أضف صورة",
           "Driver License": "رخصة القيادة",
           "Error in forget password": "خطأ في استرجاع الرقم السري",
-          "Done": "تم"
+          "Done": "تم",
+          "Registeration": 'إنشاء حساب',
+          "Name": "الإسم",
+          "Email": "البريد الإليكتروني",
+          "Phone Number": "رقم الهاتف",
+          "Password": "الرقم السري",
+          "Confirm Password": "تأكيد الرقم السري",
+          "Error in signUp": "خطأ في إنشاء الحساب",
+          "Sign Up": "إنشاء الحساب"
         },
       };
 }

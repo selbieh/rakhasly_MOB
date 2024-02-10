@@ -137,39 +137,6 @@ class DriverLicensePage extends GetView<DriverLicenseController> {
                                   ),
                                 ),
                               ),
-                              // controller.form.controls['installment']?.value !=
-                              //             null &&
-                              //         controller.form.controls['installment']
-                              //                 ?.value ==
-                              //             true
-                              //     ? Padding(
-                              //         padding: const EdgeInsets.only(top: 8.0),
-                              //         child: FormItem(
-                              //           controller: controller,
-                              //           child: ReactiveDropdownField(
-                              //               items: [
-                              //                 '1 Year'.tr,
-                              //                 '2 Year'.tr,
-                              //                 '3 Year'.tr
-                              //               ]
-                              //                   .map((e) => DropdownMenuItem(
-                              //                         value: e,
-                              //                         child: Text(e),
-                              //                       ))
-                              //                   .toList(),
-                              //               formControlName: 'installmentPlane',
-                              //               decoration: InputDecoration(
-                              //                   labelText: "Installment".tr,
-                              //                   hintText: "Installment".tr,
-                              //                   contentPadding:
-                              //                       const EdgeInsets.symmetric(
-                              //                           horizontal: 8),
-                              //                   hintStyle: const TextStyle(
-                              //                       color: Colors.grey),
-                              //                   border: InputBorder.none)),
-                              //         ),
-                              //       )
-                              //     : const SizedBox(),
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: FormItem(

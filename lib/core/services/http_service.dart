@@ -17,6 +17,9 @@ class HttpService extends GetConnect {
   }
 
   Future<Response> login(body) => post('/auth/login/', body);
+
+  Future<Response> signUp(body) => post('/auth/registration/', body);
+
   Future<Response> forgetPassword(body) => post('/auth/password/reset/', body);
 
   Future<Response> saveForm(body) => post("/api/v1/car-license/", body);

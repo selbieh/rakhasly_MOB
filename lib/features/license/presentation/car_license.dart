@@ -427,23 +427,6 @@ class CarLicenseController extends GetxController
   }
   late FormGroup form;
 
-  // Future pickImageCamera() async {
-  //   try {
-  //     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-  //     if (image == null) return;
-  //     final imageTemp = File(image.path);
-  //     this.image = imageTemp;
-
-  //     form.controls['newCar']?.value = true;
-  //     form.controls['contractImage']?.value = imageTemp;
-
-  //     update();
-  //     // form.controls['contractImage']?.value = this.image;
-  //   } on PlatformException catch (e) {
-  //     debugPrint('Failed to pick image: $e');
-  //   }
-  // }
-
   Future saveForm(context) async {
     debugPrint(form.value.toString());
     isBusy.value = true;

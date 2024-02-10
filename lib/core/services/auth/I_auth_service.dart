@@ -8,6 +8,7 @@ abstract class AuthService {
   bool isLoggedIn = false;
 
   Future<Either<Failure, dynamic>> login({required Map<String, dynamic> body});
+  Future<Either<Failure, dynamic>> signUp({required Map<String, dynamic> body});
 
   Future<Either<Failure, dynamic>> updateAccount(
       {required int id, required Map<String, dynamic> body});
