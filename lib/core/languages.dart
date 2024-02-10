@@ -60,7 +60,8 @@ class Languages extends Translations {
           "Password": "الرقم السري",
           "Confirm Password": "تأكيد الرقم السري",
           "Error in signUp": "خطأ في إنشاء الحساب",
-          "Sign Up": "إنشاء الحساب"
+          "Sign Up": "إنشاء الحساب",
+          "Retry": "أعد المحاولة",
         },
       };
 }

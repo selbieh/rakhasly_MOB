@@ -6,6 +6,7 @@ import 'package:rakshny/features/auth/presentation/sign_in_screen.dart';
 import 'package:rakshny/features/home/controller/home_controller.dart';
 import 'package:rakshny/features/license/presentation/car_license.dart';
 import 'package:rakshny/features/license/presentation/driver_license.dart';
+import 'package:rakshny/features/license/presentation/previous_request.dart';
 import 'package:rakshny/features/profile/presentation/profile_page.dart';
 
 class Home extends GetView<HomeController> {
@@ -45,10 +46,9 @@ class Home extends GetView<HomeController> {
         "onClick": () async {
           if (!Get.find<AuthService>().isLoggedIn) {
             Get.to(() => const SignInPage());
+          } else {
+            Get.to(() => PreviousRequest());
           }
-          //  else {
-          //   Get.to(() => const ProfilePage());
-          // }
         }
       },
     ];

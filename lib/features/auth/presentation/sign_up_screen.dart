@@ -85,21 +85,21 @@ class SignUpPage extends GetView<SignUpController> {
                             formGroup: controller.form,
                             child: Column(
                               children: <Widget>[
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                              color: Colors.grey.shade200))),
-                                  child: ReactiveTextField(
-                                    formControlName: 'username',
-                                    decoration: InputDecoration(
-                                        hintText: "Name".tr,
-                                        hintStyle:
-                                            const TextStyle(color: Colors.grey),
-                                        border: InputBorder.none),
-                                  ),
-                                ),
+                                // Container(
+                                //   padding: const EdgeInsets.all(10),
+                                //   decoration: BoxDecoration(
+                                //       border: Border(
+                                //           bottom: BorderSide(
+                                //               color: Colors.grey.shade200))),
+                                //   child: ReactiveTextField(
+                                //     formControlName: 'username',
+                                //     decoration: InputDecoration(
+                                //         hintText: "Name".tr,
+                                //         hintStyle:
+                                //             const TextStyle(color: Colors.grey),
+                                //         border: InputBorder.none),
+                                //   ),
+                                // ),
                                 Container(
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
@@ -268,7 +268,8 @@ class LoginBtn extends StatelessWidget {
 
 class SignUpController extends GetxController with StateMixin<bool> {
   FormGroup form = FormGroup({
-    'username': FormControl<String>(validators: [Validators.required]),
+    'username': FormControl<String>(),
+    'name': FormControl<String>(),
     'email': FormControl<String>(
         validators: [Validators.required, Validators.email]),
     'phone': FormControl<String>(validators: [
@@ -292,6 +293,10 @@ class SignUpController extends GetxController with StateMixin<bool> {
   }
 
   Future signUp(context) async {
+    form.controls['username']?.value =
+        (form.controls['email']?.value as String).split("@")[0];
+    form.controls['name']?.value =
+        (form.controls['email']?.value as String).split("@")[0];
     final authService = Get.find<AuthService>();
     change(null, status: RxStatus.loading());
     var res = await authService.signUp(body: form.value);

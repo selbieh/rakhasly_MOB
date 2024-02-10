@@ -29,4 +29,7 @@ class HttpService extends GetConnect {
       post("/api/v1/driver-license/", body);
 
   Future<Response> getGovernmentsLicenseUnits() => get("/api/v1/governorates/");
+
+  getPreviosDrivingLicensesRequest() => get('/api/v1/driver-license');
+  getPreviosCarLicensesRequest() => get('/api/v1/car-license');
 }

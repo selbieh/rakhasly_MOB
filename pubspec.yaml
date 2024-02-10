@@ -44,6 +44,7 @@ dependencies:
   reactive_image_picker: ^5.0.0
   app_settings: ^5.0.0
   awesome_dialog: ^3.2.0
+  rating_dialog: ^2.0.4
 
 dev_dependencies:
   flutter_test:
