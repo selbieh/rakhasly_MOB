@@ -11,7 +11,7 @@ abstract class AuthService {
   Future<Either<Failure, dynamic>> signUp({required Map<String, dynamic> body});
 
   Future<Either<Failure, dynamic>> updateAccount(
-      {required int id, required Map<String, dynamic> body});
+      {required Map<String, dynamic> body});
 
   Future<bool> saveUser({required User user});
 

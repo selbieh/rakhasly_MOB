@@ -83,17 +83,14 @@ class AuthServiceImpl implements AuthService {
 
   @override
   Future<Either<Failure, dynamic>> updateAccount({
-    required int id,
     required Map<String, dynamic> body,
   }) async {
-    // final res = await api.request(
-    //   "${EndPoints.user}/$id",
-    //   type: RequestType.put,
-    //   body: body,
-    //   headers: Header.userHeader,
-    // );
-    var res = Future.value(Left(Failure(message: "test")));
-    return res;
+    var res = await api.updateProfile(body);
+    if (res.statusCode == 200) {
+      return Right(res.body);
+    } else {
+      return Left(Failure(message: res.bodyString ?? "Error in login".tr));
+    }
   }
 
   @override

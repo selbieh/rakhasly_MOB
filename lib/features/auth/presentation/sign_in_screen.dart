@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rakshny/core/models/user.dart';
@@ -152,10 +153,16 @@ class SignInPage extends GetView<SignInController> {
                         },
                         onEmpty: FadeInUp(
                             duration: const Duration(milliseconds: 1600),
-                            child: LoginBtn(controller: controller)),
+                            child: LoginBtn(
+                              controller: controller,
+                              ctx: context,
+                            )),
                         onError: (error) => Column(
                           children: [
-                            LoginBtn(controller: controller),
+                            LoginBtn(
+                              controller: controller,
+                              ctx: context,
+                            ),
                             const SizedBox(height: 20),
                             Text(error ?? "Error".tr,
                                 style: const TextStyle(color: Colors.red)),
@@ -204,9 +211,11 @@ class LoginBtn extends StatelessWidget {
   const LoginBtn({
     super.key,
     required this.controller,
+    required this.ctx,
   });
 
   final SignInController controller;
+  final BuildContext ctx;
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +225,7 @@ class LoginBtn extends StatelessWidget {
         if (controller.form.valid) {
           FocusManager.instance.primaryFocus?.unfocus();
 
-          await controller.signIn();
+          await controller.signIn(ctx);
         } else {
           debugPrint("Error");
         }
@@ -255,12 +264,17 @@ class SignInController extends GetxController with StateMixin<bool> {
     change(false, status: RxStatus.empty());
   }
 
-  Future signIn() async {
+  Future signIn(context) async {
     final authService = Get.find<AuthService>();
     change(null, status: RxStatus.loading());
     var res = await authService.login(body: form.value);
-    res.fold((left) {
-      change(false, status: RxStatus.error(left.message));
+    res.fold((left) async {
+      change(false, status: RxStatus.empty());
+      await AwesomeDialog(
+              context: context,
+              dialogType: DialogType.error,
+              desc: left.message)
+          .show();
     }, (right) async {
       var user = User.fromJson(right);
       await authService.saveUser(user: user);
