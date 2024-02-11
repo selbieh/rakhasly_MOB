@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rakshly/core/models/previous_car_requests.dart';
@@ -9,12 +10,12 @@ import 'package:rating_dialog/rating_dialog.dart';
 class TabItem extends StatelessWidget {
   PrevDrivingLicenseRequestResults? item;
   final PreviousRequestController controller;
-
-  TabItem({
-    super.key,
-    required this.item,
-    required this.controller,
-  });
+  final BuildContext ctx;
+  TabItem(
+      {super.key,
+      required this.item,
+      required this.controller,
+      required this.ctx});
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +47,28 @@ class TabItem extends StatelessWidget {
             submitButtonText: 'Submit',
             commentHint: 'Set your custom comment hint',
             onCancelled: () => debugPrint('cancelled'),
-            onSubmitted: (response) {
+            onSubmitted: (response) async {
               debugPrint(
                   'rating: ${response.rating}, comment: ${response.comment}');
 
+              final api = Get.find<HttpService>();
+              var res = await api.rating(
+                  {"rating": response.rating, "comment": response.comment});
+
+              if (res.statusCode == 201) {
+                await AwesomeDialog(
+                        context: ctx,
+                        desc: "Rating is done".tr,
+                        dialogType: DialogType.success)
+                    .show();
+              } else {
+                await AwesomeDialog(
+                        context: ctx,
+                        desc: "Error in rating".tr,
+                        dialogType: DialogType.error)
+                    .show();
+              }
+              debugPrint(res.body.toString());
               if (response.rating < 3.0) {}
             },
           );
@@ -144,19 +163,19 @@ class TabItem extends StatelessWidget {
                                 int id = item!.id!;
                                 if (type == "car") {
                                   res = await api.updateCarLicenseRequest(
-                                      id ?? 0, {"status": "CANCELED"});
+                                      id, {"status": "CANCELED"});
                                 } else {
                                   res = await api.updateDriverLicenseRequest(
-                                      id ?? 0, {"status": "CANCELED"});
+                                      id, {"status": "CANCELED"});
                                 }
                                 item =
                                     PrevDrivingLicenseRequestResults.fromJson(
                                         res.body);
 
                                 var oldIndex = controller
-                                    .prevRequest?.value.results
+                                    .prevRequest.value.results
                                     ?.indexWhere((element) => element.id == id);
-                                controller.prevRequest!.value
+                                controller.prevRequest.value
                                     .results![oldIndex!] = item!;
                                 controller.isBusy.value = false;
                               } catch (e) {

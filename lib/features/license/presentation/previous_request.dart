@@ -2,7 +2,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:rakshly/core/models/previous_car_requests.dart';
 
 import 'package:rakshly/core/services/http_service.dart';
@@ -66,7 +65,7 @@ class PreviousRequestController extends GetxController
         final result = await getPreviosLicensesRequest(currentIndex);
         cachedResults[currentIndex] = result.value;
       }
-      prevRequest?.value = cachedResults[currentIndex]!;
+      prevRequest.value = cachedResults[currentIndex]!;
     });
     super.onInit();
     cachedResults[tabController.index] =
@@ -80,7 +79,7 @@ class PreviousRequestController extends GetxController
         ? await api.getPreviosCarLicensesRequest()
         : await api.getPreviosDrivingLicensesRequest();
     if (res.statusCode == 200) {
-      prevRequest?.value = PreviosDrivingLicenseRequest.fromJson(res.body);
+      prevRequest.value = PreviosDrivingLicenseRequest.fromJson(res.body);
       isBusy.value = false;
       return prevRequest;
     } else {
@@ -140,13 +139,14 @@ class _CarLicenseTabState extends State<CarLicenseTab>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ...List.generate(
-                            widget.controller.prevRequest?.value.results
+                            widget.controller.prevRequest.value.results
                                     ?.length ??
                                 0,
                             (index) => TabItem(
-                              item: widget.controller.prevRequest!.value
-                                  .results![index],
+                              item: widget
+                                  .controller.prevRequest.value.results![index],
                               controller: widget.controller,
+                              ctx: context,
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -214,13 +214,14 @@ class _DrivingLicenseState extends State<DrivingLicenseTab>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ...List.generate(
-                            widget.controller.prevRequest?.value.results
+                            widget.controller.prevRequest.value.results
                                     ?.length ??
                                 0,
                             (index) => TabItem(
-                              item: widget.controller.prevRequest?.value
-                                  .results![index],
+                              item: widget
+                                  .controller.prevRequest.value.results![index],
                               controller: widget.controller,
+                              ctx: context,
                             ),
                           ),
                           const SizedBox(height: 20),

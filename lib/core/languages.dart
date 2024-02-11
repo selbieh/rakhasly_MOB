@@ -62,6 +62,8 @@ class Languages extends Translations {
           "Error in signUp": "خطأ في إنشاء الحساب",
           "Sign Up": "إنشاء الحساب",
           "Retry": "أعد المحاولة",
+          "Rating is done": "تم التقييم بنحاح",
+          "Error in rating": "خطأ في التقييم"
         },
       };
 }

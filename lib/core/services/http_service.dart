@@ -32,6 +32,8 @@ class HttpService extends GetConnect {
 
   getPreviosDrivingLicensesRequest() => get('/api/v1/driver-license');
   getPreviosCarLicensesRequest() => get('/api/v1/car-license');
+
+  rating(body) => post('/api/v1/ratings/', body);
   updateCarLicenseRequest(int id, Map body) =>
       patch('/api/v1/car-license/$id/', body);
   updateDriverLicenseRequest(int id, Map body) =>
