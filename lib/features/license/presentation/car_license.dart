@@ -194,31 +194,31 @@ class CarLicensePage extends GetView<CarLicenseController> {
                                     child: ReactiveTextField(
                                       formControlName: 'date',
                                       onTap: (_) async {
-                                        if (controller
-                                            ._focusNode.canRequestFocus) {
-                                          controller._focusNode.unfocus();
-                                          var picked = await showDatePicker(
-                                              context: context,
-                                              firstDate: DateTime(
+                                        // if (controller
+                                        //     ._focusNode.canRequestFocus) {
+                                        //   controller._focusNode.unfocus();
+                                        var picked = await showDatePicker(
+                                            context: context,
+                                            firstDate: DateTime(
+                                              DateTime.now().year,
+                                              DateTime.now().month,
+                                            ),
+                                            lastDate: DateTime(
                                                 DateTime.now().year,
                                                 DateTime.now().month,
-                                              ),
-                                              lastDate: DateTime(
-                                                  DateTime.now().year,
-                                                  DateTime.now().month,
-                                                  31));
-                                          if (picked != null) {
-                                            controller.form.controls['date']
-                                                ?.value = picked;
-                                            controller.update();
-                                          }
+                                                31));
+                                        if (picked != null) {
+                                          controller.form.controls['date']
+                                              ?.value = picked;
+                                          controller.update();
                                         }
+                                        // }
                                       },
                                       valueAccessor: DateTimeValueAccessor(
                                         dateTimeFormat:
                                             DateFormat('dd MMM yyyy'),
                                       ),
-                                      focusNode: controller._focusNode,
+                                      // focusNode: controller._focusNode,
                                       readOnly: true,
                                       decoration: InputDecoration(
                                         contentPadding:
@@ -375,14 +375,14 @@ class CarLicenseController extends GetxController
 
   File? image;
 
-  late FocusNode _focusNode;
+  // late FocusNode _focusNode;
 
   RxBool isBusy = false.obs;
 
   @override
   onInit() async {
     super.onInit();
-    _focusNode = FocusNode();
+    // _focusNode = FocusNode();
     change(null, status: RxStatus.empty());
     api = Get.find();
     await getGovernmentsLicenseUnits();
@@ -390,7 +390,7 @@ class CarLicenseController extends GetxController
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    // _focusNode.dispose();
     super.dispose();
   }
 

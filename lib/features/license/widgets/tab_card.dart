@@ -2,21 +2,27 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rakshly/core/models/previous_car_requests.dart';
+import 'package:rakshly/core/services/http_service.dart';
+import 'package:rakshly/features/license/presentation/previous_request.dart';
 import 'package:rating_dialog/rating_dialog.dart';
 
 class TabItem extends StatelessWidget {
-  final PrevDrivingLicenseRequestResults item;
+  PrevDrivingLicenseRequestResults? item;
+  final PreviousRequestController controller;
 
   TabItem({
     super.key,
     required this.item,
+    required this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
+    var isPending = false.obs;
+    var type = controller.tabController.index == 0 ? "car" : "driver";
     return GestureDetector(
       onTap: () {
-        if (item.status == "DONE") {
+        if (item!.status == "DONE") {
           final dialog = RatingDialog(
             initialRating: 1.0,
             // your app's name?
@@ -81,16 +87,17 @@ class TabItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ...[
-                    {"status": item.status ?? ""},
-                    {"needs_check": item.needsCheck ?? false},
-                    {"renewal_duration": item.renewalDuration ?? 0},
-                    {"visit_date": item.visitDate ?? ""},
-                    {"vip_assistance": item.vipAssistance ?? false},
-                    {"installment": item.installment ?? false},
-                    {"is_new_car": item.isNewCar ?? false},
-                    // {"contract": item.contract ?? ""},
-                    {"price": item.price ?? ""},
-                    {"notes": item.notes ?? ""},
+                    {"id": item!.id ?? ""},
+                    {"status": item!.status ?? ""},
+                    {"needs_check": item!.needsCheck ?? false},
+                    {"renewal_duration": item!.renewalDuration ?? 0},
+                    {"visit_date": item!.visitDate ?? ""},
+                    {"vip_assistance": item!.vipAssistance ?? false},
+                    {"installment": item!.installment ?? false},
+                    {"is_new_car": item!.isNewCar ?? false},
+                    // {"contract": item!.contract ?? ""},
+                    {"price": item!.price ?? ""},
+                    {"notes": item!.notes ?? ""},
                   ].map<Widget>(
                     (item) {
                       var itemKey = item.keys.first;
@@ -123,9 +130,39 @@ class TabItem extends StatelessWidget {
                       );
                     },
                   ).toList(),
-                  if (item.status != "DONE") ...[
+                  if (item!.status != "DONE" &&
+                      item!.status != "APPROVED" &&
+                      item!.status != "CANCELED") ...[
                     MaterialButton(
-                      onPressed: () {},
+                      onPressed: isPending.value
+                          ? null
+                          : () async {
+                              try {
+                                controller.isBusy.value = true;
+                                final api = Get.find<HttpService>();
+                                var res;
+                                int id = item!.id!;
+                                if (type == "car") {
+                                  res = await api.updateCarLicenseRequest(
+                                      id ?? 0, {"status": "CANCELED"});
+                                } else {
+                                  res = await api.updateDriverLicenseRequest(
+                                      id ?? 0, {"status": "CANCELED"});
+                                }
+                                item =
+                                    PrevDrivingLicenseRequestResults.fromJson(
+                                        res.body);
+
+                                var oldIndex = controller
+                                    .prevRequest?.value.results
+                                    ?.indexWhere((element) => element.id == id);
+                                controller.prevRequest!.value
+                                    .results![oldIndex!] = item!;
+                                controller.isBusy.value = false;
+                              } catch (e) {
+                                controller.isBusy.value = false;
+                              }
+                            },
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),
                       color: Colors.red,
@@ -133,7 +170,7 @@ class TabItem extends StatelessWidget {
                         "Cancel request".tr,
                         style: const TextStyle(color: Colors.white),
                       ),
-                    )
+                    ),
                   ]
                 ],
               ),

@@ -144,31 +144,27 @@ class DriverLicensePage extends GetView<DriverLicenseController> {
                                     child: ReactiveTextField(
                                       formControlName: 'date',
                                       onTap: (_) async {
-                                        if (controller
-                                            ._focusNode.canRequestFocus) {
-                                          controller._focusNode.unfocus();
-                                          var picked = await showDatePicker(
-                                              context: context,
-                                              firstDate: DateTime(
+                                        var picked = await showDatePicker(
+                                            context: context,
+                                            firstDate: DateTime(
+                                              DateTime.now().year,
+                                              DateTime.now().month,
+                                            ),
+                                            lastDate: DateTime(
                                                 DateTime.now().year,
                                                 DateTime.now().month,
-                                              ),
-                                              lastDate: DateTime(
-                                                  DateTime.now().year,
-                                                  DateTime.now().month,
-                                                  31));
-                                          if (picked != null) {
-                                            controller.form.controls['date']
-                                                ?.value = picked;
-                                            controller.update();
-                                          }
+                                                31));
+                                        if (picked != null) {
+                                          controller.form.controls['date']
+                                              ?.value = picked;
+                                          controller.update();
                                         }
                                       },
                                       valueAccessor: DateTimeValueAccessor(
                                         dateTimeFormat:
                                             DateFormat('dd MMM yyyy'),
                                       ),
-                                      focusNode: controller._focusNode,
+                                      // focusNode: controller._focusNode,
                                       readOnly: true,
                                       decoration: InputDecoration(
                                         contentPadding:
@@ -305,14 +301,14 @@ class DriverLicenseController extends GetxController
 
   File? image;
 
-  late FocusNode _focusNode;
+  // late FocusNode _focusNode;
 
   RxBool isBusy = false.obs;
 
   @override
   onInit() async {
     super.onInit();
-    _focusNode = FocusNode();
+    // _focusNode = FocusNode();
     change(null, status: RxStatus.empty());
     api = Get.find();
     await getGovernmentsLicenseUnits();
@@ -320,7 +316,7 @@ class DriverLicenseController extends GetxController
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    // _focusNode.dispose();
     super.dispose();
   }
 
@@ -354,22 +350,22 @@ class DriverLicenseController extends GetxController
   }
   late FormGroup form;
 
-  Future pickImageCamera() async {
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-      final imageTemp = File(image.path);
-      this.image = imageTemp;
+  // Future pickImageCamera() async {
+  //   try {
+  //     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+  //     if (image == null) return;
+  //     final imageTemp = File(image.path);
+  //     this.image = imageTemp;
 
-      form.controls['newCar']?.value = true;
-      form.controls['contractImage']?.value = imageTemp;
+  //     form.controls['newCar']?.value = true;
+  //     form.controls['contractImage']?.value = imageTemp;
 
-      update();
-      // form.controls['contractImage']?.value = this.image;
-    } on PlatformException catch (e) {
-      debugPrint('Failed to pick image: $e');
-    }
-  }
+  //     update();
+  //     // form.controls['contractImage']?.value = this.image;
+  //   } on PlatformException catch (e) {
+  //     debugPrint('Failed to pick image: $e');
+  //   }
+  // }
 
   Future saveForm(context) async {
     debugPrint(form.value.toString());
