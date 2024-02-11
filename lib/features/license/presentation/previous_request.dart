@@ -12,7 +12,7 @@ class PreviousRequest extends GetView<PreviousRequestController> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(PreviousRequestController());
+    final controller = Get.put(PreviousRequestController(context: context));
 
     return Scaffold(
       appBar: AppBar(
@@ -27,9 +27,9 @@ class PreviousRequest extends GetView<PreviousRequestController> {
       ),
       body: TabBarView(
         controller: controller.tabController,
-        children: const [
-          CarLicenseTab(),
-          DrivingLicenseTab(),
+        children: [
+          CarLicenseTab(controller),
+          DrivingLicenseTab(controller: controller),
         ],
       ),
     );
@@ -40,15 +40,65 @@ class PreviousRequestController extends GetxController
     with GetSingleTickerProviderStateMixin {
   late TabController tabController;
 
+  final bike = ''.obs;
+  var isBusy = false.obs;
+  var isError = false.obs;
+  final api = Get.find<HttpService>();
+  final BuildContext context;
+  PreviousRequestController({required this.context});
+
+  final Map<int, PreviosDrivingLicenseRequest?> cachedResults = {};
+
+  PreviosDrivingLicenseRequest? prevRequest;
+
   @override
-  void onInit() {
+  void onInit() async {
     tabController = TabController(vsync: this, length: 2);
+    tabController.addListener(() async {
+      // await getPreviosLicensesRequest(tabController.index);
+      final int currentIndex = tabController.index;
+
+      // Check if the result is already cached
+      if (!cachedResults.containsKey(currentIndex)) {
+        // If not cached, make the request and store the result in the cache
+        final result = await getPreviosLicensesRequest(currentIndex);
+        cachedResults[currentIndex] = result;
+      }
+
+      prevRequest = cachedResults[currentIndex];
+    });
     super.onInit();
+    cachedResults[0] = await getPreviosLicensesRequest(0);
+  }
+
+  getPreviosLicensesRequest(index) async {
+    isError.value = false;
+    isBusy.value = true;
+    final res = index == 0
+        ? await api.getPreviosCarLicensesRequest()
+        : await api.getPreviosDrivingLicensesRequest();
+    if (res.statusCode == 200) {
+      prevRequest = PreviosDrivingLicenseRequest.fromJson(res.body);
+      isBusy.value = false;
+      return prevRequest;
+    } else {
+      isBusy.value = false;
+      isError.value = true;
+      AwesomeDialog(
+              context: Get.context!,
+              dialogType: DialogType.error,
+              animType: AnimType.bottomSlide,
+              desc: res.bodyString,
+              descTextStyle:
+                  const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
+          .show();
+    }
   }
 }
 
 class CarLicenseTab extends StatefulWidget {
-  const CarLicenseTab({super.key});
+  final PreviousRequestController controller;
+  const CarLicenseTab(this.controller, {super.key});
 
   @override
   _CarLicenseTabState createState() => _CarLicenseTabState();
@@ -56,13 +106,49 @@ class CarLicenseTab extends StatefulWidget {
 
 class _CarLicenseTabState extends State<CarLicenseTab>
     with AutomaticKeepAliveClientMixin {
-  final controller = Get.put(CarLicenseTabController());
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return Center(
-      child: Obx(() => Text(controller.car.value)),
+      child: Obx(() => widget.controller.isBusy.value
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : widget.controller.isError.value
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("error".tr),
+                      MaterialButton(
+                        onPressed: () async {
+                          await widget.controller.getPreviosLicensesRequest(
+                              widget.controller.tabController.index);
+                        },
+                        child: Text("Retry".tr),
+                      )
+                    ],
+                  ),
+                )
+              : Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListView(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ...List.generate(
+                            widget.controller.prevRequest?.results?.length ?? 0,
+                            (index) => TabItem(
+                                item: widget
+                                    .controller.prevRequest!.results![index]),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
+                    ],
+                  ),
+                )),
     );
   }
 
@@ -81,7 +167,8 @@ class CarLicenseTabController extends GetxController {
 }
 
 class DrivingLicenseTab extends StatefulWidget {
-  const DrivingLicenseTab({super.key});
+  final PreviousRequestController controller;
+  const DrivingLicenseTab({required this.controller, super.key});
 
   @override
   _DrivingLicenseState createState() => _DrivingLicenseState();
@@ -92,21 +179,21 @@ class _DrivingLicenseState extends State<DrivingLicenseTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var controller = Get.put(DrivingLicenseController(context: context));
     return Center(
-      child: Obx(() => controller.isBusy.value
+      child: Obx(() => widget.controller.isBusy.value
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : controller.isError.value
+          : widget.controller.isError.value
               ? Center(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text("error".tr),
                       MaterialButton(
                         onPressed: () async {
-                          await controller
-                              .getPreviosDrivingLicensesRequest(context);
+                          await widget.controller.getPreviosLicensesRequest(
+                              widget.controller.tabController.index);
                         },
                         child: Text("Retry".tr),
                       )
@@ -121,9 +208,10 @@ class _DrivingLicenseState extends State<DrivingLicenseTab>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ...List.generate(
-                            controller.prevRequest?.results?.length ?? 0,
+                            widget.controller.prevRequest?.results?.length ?? 0,
                             (index) => TabItem(
-                                item: controller.prevRequest!.results![index]),
+                                item: widget
+                                    .controller.prevRequest!.results![index]),
                           ),
                           const SizedBox(height: 20),
                         ],
@@ -136,44 +224,4 @@ class _DrivingLicenseState extends State<DrivingLicenseTab>
 
   @override
   bool get wantKeepAlive => true;
-}
-
-class DrivingLicenseController extends GetxController {
-  final bike = ''.obs;
-  var isBusy = false.obs;
-  var isError = false.obs;
-  final api = Get.find<HttpService>();
-  final BuildContext context;
-  DrivingLicenseController({
-    required this.context,
-  });
-
-  PreviosDrivingLicenseRequest? prevRequest;
-
-  @override
-  void onInit() async {
-    super.onInit();
-    await getPreviosDrivingLicensesRequest(context);
-  }
-
-  getPreviosDrivingLicensesRequest(context) async {
-    isError.value = false;
-    isBusy.value = true;
-    final res = await api.getPreviosDrivingLicensesRequest();
-    if (res.statusCode == 200) {
-      prevRequest = PreviosDrivingLicenseRequest.fromJson(res.body);
-      isBusy.value = false;
-    } else {
-      isBusy.value = false;
-      isError.value = true;
-      AwesomeDialog(
-              context: context,
-              dialogType: DialogType.error,
-              animType: AnimType.bottomSlide,
-              desc: res.bodyString,
-              descTextStyle:
-                  const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
-          .show();
-    }
-  }
 }
