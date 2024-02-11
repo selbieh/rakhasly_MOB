@@ -2,10 +2,10 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rakshny/core/models/previous_car_requests.dart';
+import 'package:rakshly/core/models/previous_car_requests.dart';
 
-import 'package:rakshny/core/services/http_service.dart';
-import 'package:rakshny/features/license/widgets/tab_card.dart';
+import 'package:rakshly/core/services/http_service.dart';
+import 'package:rakshly/features/license/widgets/tab_card.dart';
 
 class PreviousRequest extends GetView<PreviousRequestController> {
   const PreviousRequest({super.key});

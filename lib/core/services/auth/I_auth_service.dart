@@ -1,6 +1,6 @@
-import 'package:rakshny/core/models/app_failure.dart';
+import 'package:rakshly/core/models/app_failure.dart';
 import 'package:either_dart/either.dart';
-import 'package:rakshny/core/models/user.dart';
+import 'package:rakshly/core/models/user.dart';
 
 abstract class AuthService {
   User? get user;

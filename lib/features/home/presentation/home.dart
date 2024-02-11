@@ -1,13 +1,13 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rakshny/core/services/auth/I_auth_service.dart';
-import 'package:rakshny/features/auth/presentation/sign_in_screen.dart';
-import 'package:rakshny/features/home/controller/home_controller.dart';
-import 'package:rakshny/features/license/presentation/car_license.dart';
-import 'package:rakshny/features/license/presentation/driver_license.dart';
-import 'package:rakshny/features/license/presentation/previous_request.dart';
-import 'package:rakshny/features/profile/presentation/profile_page.dart';
+import 'package:rakshly/core/services/auth/I_auth_service.dart';
+import 'package:rakshly/features/auth/presentation/sign_in_screen.dart';
+import 'package:rakshly/features/home/controller/home_controller.dart';
+import 'package:rakshly/features/license/presentation/car_license.dart';
+import 'package:rakshly/features/license/presentation/driver_license.dart';
+import 'package:rakshly/features/license/presentation/previous_request.dart';
+import 'package:rakshly/features/profile/presentation/profile_page.dart';
 
 class Home extends GetView<HomeController> {
   const Home({super.key});

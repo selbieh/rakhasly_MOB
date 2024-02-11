@@ -2,10 +2,10 @@ import 'package:either_dart/either.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:rakshny/core/models/app_failure.dart';
-import 'package:rakshny/core/models/user.dart';
-import 'package:rakshny/core/services/auth/I_auth_service.dart';
-import 'package:rakshny/core/services/http_service.dart';
+import 'package:rakshly/core/models/app_failure.dart';
+import 'package:rakshly/core/models/user.dart';
+import 'package:rakshly/core/services/auth/I_auth_service.dart';
+import 'package:rakshly/core/services/http_service.dart';
 
 class AuthServiceImpl implements AuthService {
   HttpService api;

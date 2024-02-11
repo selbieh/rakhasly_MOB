@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:rakshny/core/models/user.dart';
-import 'package:rakshny/core/services/auth/I_auth_service.dart';
+import 'package:rakshly/core/models/user.dart';
+import 'package:rakshly/core/services/auth/I_auth_service.dart';
 
 class HomeController extends GetxController {
   User? user;

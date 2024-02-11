@@ -1,11 +1,11 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rakshny/core/models/user.dart';
-import 'package:rakshny/core/services/auth/I_auth_service.dart';
-import 'package:rakshny/features/auth/presentation/forget_password_screen.dart';
-import 'package:rakshny/features/auth/presentation/sign_up_screen.dart';
-import 'package:rakshny/features/home/presentation/home.dart';
+import 'package:rakshly/core/models/user.dart';
+import 'package:rakshly/core/services/auth/I_auth_service.dart';
+import 'package:rakshly/features/auth/presentation/forget_password_screen.dart';
+import 'package:rakshly/features/auth/presentation/sign_up_screen.dart';
+import 'package:rakshly/features/home/presentation/home.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:animate_do/animate_do.dart';
 

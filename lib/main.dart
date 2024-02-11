@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:rakshny/core/languages.dart';
-import 'package:rakshny/features/splash/splash_page.dart';
-import 'package:rakshny/intial_binding.dart';
+import 'package:rakshly/core/languages.dart';
+import 'package:rakshly/features/splash/splash_page.dart';
+import 'package:rakshly/intial_binding.dart';
 
 void main() async {
   // Get.lazyPut(() => SignInController(), tag: 'SignInController');

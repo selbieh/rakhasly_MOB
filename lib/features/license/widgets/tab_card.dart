@@ -1,8 +1,7 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rakshny/core/models/previous_car_requests.dart';
+import 'package:rakshly/core/models/previous_car_requests.dart';
 import 'package:rating_dialog/rating_dialog.dart';
 
 class TabItem extends StatelessWidget {

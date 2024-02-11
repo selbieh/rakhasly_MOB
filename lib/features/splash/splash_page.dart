@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:rakshny/core/services/auth/I_auth_service.dart';
-import 'package:rakshny/features/auth/presentation/sign_in_screen.dart';
-import 'package:rakshny/features/home/presentation/home.dart';
+import 'package:rakshly/core/services/auth/I_auth_service.dart';
+import 'package:rakshly/features/auth/presentation/sign_in_screen.dart';
+import 'package:rakshly/features/home/presentation/home.dart';
 
 class SplashPage extends StatefulWidget {
   @override

@@ -7,12 +7,12 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:rakshny/core/models/governorate.dart';
-import 'package:rakshny/core/models/traffics.dart';
-import 'package:rakshny/core/models/user.dart';
-import 'package:rakshny/core/services/http_service.dart';
-import 'package:rakshny/features/home/presentation/home.dart';
-import 'package:rakshny/features/license/widgets/reactive_image_picker.dart';
+import 'package:rakshly/core/models/governorate.dart';
+import 'package:rakshly/core/models/traffics.dart';
+import 'package:rakshly/core/models/user.dart';
+import 'package:rakshly/core/services/http_service.dart';
+import 'package:rakshly/features/home/presentation/home.dart';
+import 'package:rakshly/features/license/widgets/reactive_image_picker.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:reactive_image_picker/reactive_image_picker.dart';
 

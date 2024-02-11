@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
-import 'package:rakshny/core/services/auth/I_auth_service.dart';
-import 'package:rakshny/core/services/auth/auth_service_impl.dart';
-import 'package:rakshny/core/services/http_service.dart';
-import 'package:rakshny/features/auth/presentation/sign_in_screen.dart';
-import 'package:rakshny/features/profile/presentation/profile_page.dart';
+import 'package:rakshly/core/services/auth/I_auth_service.dart';
+import 'package:rakshly/core/services/auth/auth_service_impl.dart';
+import 'package:rakshly/core/services/http_service.dart';
+import 'package:rakshly/features/auth/presentation/sign_in_screen.dart';
+import 'package:rakshly/features/profile/presentation/profile_page.dart';
 
 class RakhslyBinding implements Bindings {
 // default dependency

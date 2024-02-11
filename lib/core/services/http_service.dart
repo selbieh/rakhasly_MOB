@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:rakshny/core/constants.dart';
-import 'package:rakshny/core/services/auth/I_auth_service.dart';
+import 'package:rakshly/core/constants.dart';
+import 'package:rakshly/core/services/auth/I_auth_service.dart';
 
 class HttpService extends GetConnect {
   @override
