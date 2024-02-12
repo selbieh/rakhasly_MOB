@@ -100,7 +100,7 @@ class AuthServiceImpl implements AuthService {
     if (res.statusCode == 200) {
       return Right(res.body);
     } else {
-      return Left(Failure(message: res.bodyString ?? "Error in login".tr));
+      return Left(Failure(message: "Invalid credentials".tr));
     }
   }
 

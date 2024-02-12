@@ -95,8 +95,8 @@ class SignInPage extends GetView<SignInController> {
                                               color: Colors.grey.shade200))),
                                   child: ReactiveTextField(
                                     formControlName: 'email',
-                                    decoration: const InputDecoration(
-                                        hintText: "Email",
+                                    decoration: InputDecoration(
+                                        hintText: "Email".tr,
                                         hintStyle:
                                             TextStyle(color: Colors.grey),
                                         border: InputBorder.none),
@@ -118,8 +118,8 @@ class SignInPage extends GetView<SignInController> {
                                     // showErrors: (control) =>
                                     //     control.hasErrors &&
                                     //     (control.value?.isBlank ?? false),
-                                    decoration: const InputDecoration(
-                                        hintText: "Password",
+                                    decoration: InputDecoration(
+                                        hintText: "Password".tr,
                                         hintStyle:
                                             TextStyle(color: Colors.grey),
                                         border: InputBorder.none),

@@ -38,7 +38,7 @@ class ProfilePage extends GetView<ProfileController> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const SizedBox(height: 50),
+                    const SizedBox(height: 30),
                     // Center(
                     //   child: Padding(
                     //     padding: const EdgeInsets.all(12),
@@ -74,7 +74,6 @@ class ProfilePage extends GetView<ProfileController> {
                     //     onPressed: () {},
                     //   ),
                     // ),
-                    const SizedBox(height: 20),
                     Container(
                       decoration: BoxDecoration(
                           color: Colors.transparent,

@@ -85,21 +85,21 @@ class SignUpPage extends GetView<SignUpController> {
                             formGroup: controller.form,
                             child: Column(
                               children: <Widget>[
-                                // Container(
-                                //   padding: const EdgeInsets.all(10),
-                                //   decoration: BoxDecoration(
-                                //       border: Border(
-                                //           bottom: BorderSide(
-                                //               color: Colors.grey.shade200))),
-                                //   child: ReactiveTextField(
-                                //     formControlName: 'username',
-                                //     decoration: InputDecoration(
-                                //         hintText: "Name".tr,
-                                //         hintStyle:
-                                //             const TextStyle(color: Colors.grey),
-                                //         border: InputBorder.none),
-                                //   ),
-                                // ),
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              color: Colors.grey.shade200))),
+                                  child: ReactiveTextField(
+                                    formControlName: 'name',
+                                    decoration: InputDecoration(
+                                        hintText: "Name".tr,
+                                        hintStyle:
+                                            const TextStyle(color: Colors.grey),
+                                        border: InputBorder.none),
+                                  ),
+                                ),
                                 Container(
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
@@ -126,6 +126,11 @@ class SignUpPage extends GetView<SignUpController> {
                                     keyboardType: TextInputType.phone,
                                     decoration: InputDecoration(
                                         hintText: "Phone Number".tr,
+                                        prefix: const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 5.0),
+                                          child: Text("+2"),
+                                        ),
                                         hintStyle:
                                             const TextStyle(color: Colors.grey),
                                         border: InputBorder.none),
@@ -274,9 +279,9 @@ class SignUpController extends GetxController with StateMixin<bool> {
         validators: [Validators.required, Validators.email]),
     'phone': FormControl<String>(validators: [
       Validators.required,
-      Validators.maxLength(13),
-      Validators.minLength(13),
-      Validators.pattern(r'^\+20[0-9]{10}$')
+      Validators.maxLength(10),
+      Validators.minLength(10),
+      Validators.pattern(r'^[0-9]{10}$')
     ]),
     'password1': FormControl<String>(
         validators: [Validators.required, Validators.minLength(8)]),
@@ -295,8 +300,8 @@ class SignUpController extends GetxController with StateMixin<bool> {
   Future signUp(context) async {
     form.controls['username']?.value =
         (form.controls['email']?.value as String).split("@")[0];
-    form.controls['name']?.value =
-        (form.controls['email']?.value as String).split("@")[0];
+    form.controls['phone']?.value =
+        '+20${(form.controls['phone']?.value as String)}';
     final authService = Get.find<AuthService>();
     change(null, status: RxStatus.loading());
     var res = await authService.signUp(body: form.value);
