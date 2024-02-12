@@ -259,8 +259,11 @@ class ProfilePage extends GetView<ProfileController> {
             ),
             Obx(
               () => controller.isDeleteUser.value
-                  ? const Center(
-                      child: CircularProgressIndicator(),
+                  ? const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
                     )
                   : Padding(
                       padding: const EdgeInsets.all(10),
@@ -353,16 +356,21 @@ class ProfileController extends GetxController {
   }
 
   deleteAccount() async {
+    isDeleteUser.value = true;
     final api = Get.find<HttpService>();
     final res = await api.deleteUser(user?.id);
 
     if (res.statusCode == 204) {
+      isDeleteUser.value = false;
+      await authService.removeUser();
       await AwesomeDialog(
               context: Get.context!,
               dialogType: DialogType.success,
               desc: "Account deleted successfully")
           .show();
+      Get.offAll(() => const Home());
     } else {
+      isDeleteUser.value = false;
       await AwesomeDialog(
               context: Get.context!,
               dialogType: DialogType.error,

@@ -1,5 +1,4 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:easy_refresh/easy_refresh.dart';
@@ -46,6 +45,7 @@ class PreviousRequestController extends GetxController
   final bike = ''.obs;
   var isBusy = false.obs;
   var isError = false.obs;
+  var isLoadingMore = false.obs;
   final api = Get.find<HttpService>();
   final BuildContext context;
   PreviousRequestController({required this.context});
@@ -75,18 +75,30 @@ class PreviousRequestController extends GetxController
         (await getPreviosLicensesRequest()).value;
   }
 
-  getPreviosLicensesRequest({offset = 0}) async {
+  getPreviosLicensesRequest({offset = 0, loadingMore = false}) async {
     isError.value = false;
-    isBusy.value = true;
+    if (loadingMore) {
+      isBusy.value = true;
+    } else {
+      isLoadingMore.value = true;
+    }
     final res = tabController.index == 0
         ? await api.getPreviosCarLicensesRequest(offset: offset)
         : await api.getPreviosDrivingLicensesRequest(offset: offset);
     if (res.statusCode == 200) {
       prevRequest.value = PreviosDrivingLicenseRequest.fromJson(res.body);
-      isBusy.value = false;
+      if (loadingMore) {
+        isBusy.value = false;
+      } else {
+        isLoadingMore.value = false;
+      }
       return prevRequest;
     } else {
-      isBusy.value = false;
+      if (loadingMore) {
+        isBusy.value = false;
+      } else {
+        isLoadingMore.value = false;
+      }
       isError.value = true;
       AwesomeDialog(
               context: Get.context!,
@@ -176,6 +188,14 @@ class _CarLicenseTabState extends State<CarLicenseTab>
                             const SizedBox(height: 20),
                           ],
                         ),
+                        widget.controller.isLoadingMore.value
+                            ? const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              )
+                            : const SizedBox()
                       ],
                     ),
                   ),
@@ -273,6 +293,14 @@ class _DrivingLicenseState extends State<DrivingLicenseTab>
                             const SizedBox(height: 20),
                           ],
                         ),
+                        widget.controller.isLoadingMore.value
+                            ? const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              )
+                            : const SizedBox()
                       ],
                     ),
                   ),

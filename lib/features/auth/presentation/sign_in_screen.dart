@@ -251,10 +251,8 @@ class LoginBtn extends StatelessWidget {
 class SignInController extends GetxController with StateMixin<bool> {
   FormGroup form = FormGroup({
     'email': FormControl<String>(
-        value: "admin@admin.com",
         validators: [Validators.required, Validators.email]),
     'password': FormControl<String>(
-        value: 'admon@123',
         validators: [Validators.required, Validators.minLength(8)])
   });
 
