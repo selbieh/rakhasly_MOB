@@ -35,7 +35,8 @@ class MyApp extends StatelessWidget {
         ValidationMessage.required: (error) => 'Field must not be empty'.tr,
         ValidationMessage.email: (error) => 'Must enter a valid email'.tr,
         ValidationMessage.min: (error) => 'Minimum Length'.tr,
-        ValidationMessage.minLength: (error) => 'Minimum Length'.tr,
+        ValidationMessage.minLength: (error) =>
+            "${'This field must exceed '.tr}${(error as Map)['requiredLength']} ${"characters".tr}",
         ValidationMessage.max: (error) => 'Max Length'.tr,
         ValidationMessage.maxLength: (error) => 'Max Length'.tr,
         ValidationMessage.mustMatch: (error) => 'Passwords must match'.tr,
