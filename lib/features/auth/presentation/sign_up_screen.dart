@@ -279,9 +279,9 @@ class SignUpController extends GetxController with StateMixin<bool> {
         validators: [Validators.required, Validators.email]),
     'phone': FormControl<String>(validators: [
       Validators.required,
-      Validators.maxLength(10),
-      Validators.minLength(10),
-      Validators.pattern(r'^[0-9]{10}$')
+      Validators.maxLength(11),
+      Validators.minLength(11),
+      Validators.pattern(r'^0[0-9]{10}$')
     ]),
     'password1': FormControl<String>(
         validators: [Validators.required, Validators.minLength(8)]),
@@ -298,14 +298,14 @@ class SignUpController extends GetxController with StateMixin<bool> {
   }
 
   Future signUp(context) async {
-    var newForm = form.value;
-    newForm['phone'] = '+2${(form.controls['phone']?.value as String)}';
+    // var newForm = form.value.;
+    // newForm['phone'] = '+2${(form.controls['phone']?.value as String)}';
 
-    form.controls['username']?.value =
-        (form.controls['email']?.value as String).split("@")[0];
+    // form.controls['username']?.value =
+    //     (form.controls['email']?.value as String).split("@")[0];
     final authService = Get.find<AuthService>();
     change(null, status: RxStatus.loading());
-    var res = await authService.signUp(body: form.value);
+    var res = await authService.signUp(body: createNewForm());
     res.fold((left) async {
       change(false, status: RxStatus.empty());
       await AwesomeDialog(
@@ -319,5 +319,16 @@ class SignUpController extends GetxController with StateMixin<bool> {
       change(true, status: RxStatus.success());
       Get.offAll(const Home());
     });
+  }
+
+  Map<String, dynamic> createNewForm() {
+    return {
+      'username': (form.controls['email']?.value as String).split("@")[0],
+      'name': form.control('name').value,
+      'email': form.control('email').value,
+      "phone": '+2${form.control('phone').value}',
+      "password1": form.control('password1').value,
+      "password2": form.control('password2').value,
+    };
   }
 }

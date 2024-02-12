@@ -71,7 +71,8 @@ class Languages extends Translations {
           "Max Length": "تجاوز الحد الأقصى",
           "Passwords must match": "يجب أن تتطابق كلمات المرور",
           "Invalid credentials": "البريد الإلكتروني او كلمة المرور غير صحيحة",
-          "Error in singup": "خطأ في إنشاء الحساب"
+          "Error in singup": "خطأ في إنشاء الحساب",
+          "Phone must start with 0": "خطأ في رقم الهاتف"
         },
       };
 }
