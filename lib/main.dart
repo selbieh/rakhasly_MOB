@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         ValidationMessage.max: (error) => 'Max Length'.tr,
         ValidationMessage.maxLength: (error) => 'Max Length'.tr,
         ValidationMessage.mustMatch: (error) => 'Passwords must match'.tr,
-        // ValidationMessage.pattern: (error) => 'Phone must start with +201'.tr,
+        ValidationMessage.pattern: (error) => 'Phone must start with 0'.tr,
       },
       child: GetMaterialApp(
         title: 'Rakhsly',
