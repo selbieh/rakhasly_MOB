@@ -298,10 +298,11 @@ class SignUpController extends GetxController with StateMixin<bool> {
   }
 
   Future signUp(context) async {
+    var newForm = form.value;
+    newForm['phone'] = '+2${(form.controls['phone']?.value as String)}';
+
     form.controls['username']?.value =
         (form.controls['email']?.value as String).split("@")[0];
-    form.controls['phone']?.value =
-        '+20${(form.controls['phone']?.value as String)}';
     final authService = Get.find<AuthService>();
     change(null, status: RxStatus.loading());
     var res = await authService.signUp(body: form.value);
@@ -310,7 +311,7 @@ class SignUpController extends GetxController with StateMixin<bool> {
       await AwesomeDialog(
               context: context,
               dialogType: DialogType.error,
-              desc: left.message)
+              desc: "Error in singup".tr)
           .show();
     }, (right) async {
       var user = User.fromJson(right);

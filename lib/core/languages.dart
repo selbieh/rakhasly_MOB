@@ -70,7 +70,8 @@ class Languages extends Translations {
           "Minimum Length": "يجب أن يتجاوز الحد الأدني",
           "Max Length": "تجاوز الحد الأقصى",
           "Passwords must match": "يجب أن تتطابق كلمات المرور",
-          "Invalid credentials": "البريد الإلكتروني او كلمة المرور غير صحيحة"
+          "Invalid credentials": "البريد الإلكتروني او كلمة المرور غير صحيحة",
+          "Error in singup": "خطأ في إنشاء الحساب"
         },
       };
 }
