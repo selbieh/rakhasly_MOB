@@ -14,6 +14,7 @@ class CustomReactiveImagePicker extends StatelessWidget {
   Widget build(BuildContext context) {
     return ReactiveImagePicker(
       formControlName: formControlName,
+      imageQuality: 40,
       modes: const [ImagePickerMode.galleryImage, ImagePickerMode.cameraImage],
       decoration: InputDecoration(
           labelText: label ?? 'Image',

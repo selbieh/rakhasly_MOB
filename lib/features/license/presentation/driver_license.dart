@@ -226,7 +226,7 @@ class DriverLicensePage extends GetView<DriverLicenseController> {
                   ),
                 ),
               ),
-              Obx(() => controller.isBusy.isFalse
+              controller.isBusy.isFalse
                   ? Padding(
                       padding: const EdgeInsets.all(10),
                       child: Align(
@@ -262,7 +262,7 @@ class DriverLicensePage extends GetView<DriverLicenseController> {
                   : const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Center(child: CircularProgressIndicator()),
-                    ))
+                    )
             ],
           ),
         ),
@@ -368,34 +368,40 @@ class DriverLicenseController extends GetxController
   // }
 
   Future saveForm(context) async {
-    debugPrint(form.value.toString());
-    isBusy.value = true;
-    // update();
-    var formDataBody = _createMultipartFormData();
-    final res = await api.saveDriverForm(formDataBody);
-    debugPrint(res.bodyString.toString());
-    if (res.statusCode == 200 || res.statusCode == 201) {
-      await AwesomeDialog(
-              context: context,
-              dialogType: DialogType.success,
-              animType: AnimType.bottomSlide,
-              desc: "Done".tr,
-              descTextStyle:
-                  const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
-          .show();
-      Get.off(() => const Home());
-    } else {
-      AwesomeDialog(
-              context: context,
-              dialogType: DialogType.error,
-              animType: AnimType.bottomSlide,
-              desc: res.bodyString,
-              descTextStyle:
-                  const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
-          .show();
+    try {
+      debugPrint(form.value.toString());
+      isBusy.value = true;
+      update();
+      var formDataBody = _createMultipartFormData();
+      final res = await api.saveDriverForm(formDataBody);
+      debugPrint(res.bodyString.toString());
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        isBusy.value = false;
+        update();
+        await AwesomeDialog(
+                context: context,
+                dialogType: DialogType.success,
+                animType: AnimType.bottomSlide,
+                desc: "Done".tr,
+                descTextStyle:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
+            .show();
+        Get.off(() => const Home());
+      } else {
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.error,
+                animType: AnimType.bottomSlide,
+                desc: res.bodyString ?? res.statusText,
+                descTextStyle:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
+            .show();
+      }
+      isBusy.value = false;
+      update();
+    } catch (e) {
+      debugPrint(e.toString());
     }
-    isBusy.value = false;
-    update();
   }
 
   FormData _createMultipartFormData() {

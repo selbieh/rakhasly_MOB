@@ -1,4 +1,4 @@
-package com.sayedTech.rakshny
+package com.sayedTech.rakshly
 
 import io.flutter.embedding.android.FlutterActivity
 

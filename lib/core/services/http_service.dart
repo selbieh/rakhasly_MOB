@@ -6,7 +6,7 @@ class HttpService extends GetConnect {
   @override
   void onInit() {
     httpClient.baseUrl = Constants.url;
-
+    httpClient.timeout = const Duration(seconds: 10);
     httpClient.addRequestModifier<dynamic>((request) {
       final auth = Get.find<AuthService>();
       if (auth.isLoggedIn) {
