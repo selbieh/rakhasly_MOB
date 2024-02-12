@@ -1,5 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rakshly/core/models/previous_car_requests.dart';
@@ -62,22 +65,22 @@ class PreviousRequestController extends GetxController
       // Check if the result is already cached
       if (!cachedResults.containsKey(currentIndex)) {
         // If not cached, make the request and store the result in the cache
-        final result = await getPreviosLicensesRequest(currentIndex);
+        final result = await getPreviosLicensesRequest();
         cachedResults[currentIndex] = result.value;
       }
       prevRequest.value = cachedResults[currentIndex]!;
     });
     super.onInit();
     cachedResults[tabController.index] =
-        (await getPreviosLicensesRequest(0)).value;
+        (await getPreviosLicensesRequest()).value;
   }
 
-  getPreviosLicensesRequest(index) async {
+  getPreviosLicensesRequest({offset = 0}) async {
     isError.value = false;
     isBusy.value = true;
-    final res = index == 0
-        ? await api.getPreviosCarLicensesRequest()
-        : await api.getPreviosDrivingLicensesRequest();
+    final res = tabController.index == 0
+        ? await api.getPreviosCarLicensesRequest(offset: offset)
+        : await api.getPreviosDrivingLicensesRequest(offset: offset);
     if (res.statusCode == 200) {
       prevRequest.value = PreviosDrivingLicenseRequest.fromJson(res.body);
       isBusy.value = false;
@@ -123,36 +126,58 @@ class _CarLicenseTabState extends State<CarLicenseTab>
                       Text("error".tr),
                       MaterialButton(
                         onPressed: () async {
-                          await widget.controller.getPreviosLicensesRequest(
-                              widget.controller.tabController.index);
+                          await widget.controller.getPreviosLicensesRequest();
                         },
                         child: Text("Retry".tr),
                       )
                     ],
                   ),
                 )
-              : Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListView(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ...List.generate(
-                            widget.controller.prevRequest.value.results
-                                    ?.length ??
-                                0,
-                            (index) => TabItem(
-                              item: widget
-                                  .controller.prevRequest.value.results![index],
-                              controller: widget.controller,
-                              ctx: context,
+              : EasyRefresh(
+                  onRefresh: () async {
+                    await widget.controller.getPreviosLicensesRequest();
+                  },
+                  onLoad: () async {
+                    if (widget.controller.prevRequest.value.next != null) {
+                      var nextLink =
+                          widget.controller.prevRequest.value.next as String;
+                      var offsetAndLimit = nextLink.split("?")[1].split("&");
+                      Map<String, String> queryParams = {};
+
+                      for (String param in offsetAndLimit) {
+                        List<String> keyValue = param.split("=");
+                        if (keyValue.length == 2) {
+                          queryParams[keyValue[0]] = keyValue[1];
+                        }
+                      }
+                      debugPrint(queryParams.toString());
+                      await widget.controller.getPreviosLicensesRequest(
+                          offset: int.parse(queryParams['offset'] ?? "0") + 10);
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: ListView(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ...List.generate(
+                              widget.controller.prevRequest.value.results
+                                      ?.length ??
+                                  0,
+                              (index) => TabItem(
+                                item: widget.controller.prevRequest.value
+                                    .results![index],
+                                controller: widget.controller,
+                                ctx: context,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 20),
-                        ],
-                      ),
-                    ],
+                            const SizedBox(height: 20),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 )),
     );
@@ -198,36 +223,58 @@ class _DrivingLicenseState extends State<DrivingLicenseTab>
                       Text("error".tr),
                       MaterialButton(
                         onPressed: () async {
-                          await widget.controller.getPreviosLicensesRequest(
-                              widget.controller.tabController.index);
+                          await widget.controller.getPreviosLicensesRequest();
                         },
                         child: Text("Retry".tr),
                       )
                     ],
                   ),
                 )
-              : Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListView(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ...List.generate(
-                            widget.controller.prevRequest.value.results
-                                    ?.length ??
-                                0,
-                            (index) => TabItem(
-                              item: widget
-                                  .controller.prevRequest.value.results![index],
-                              controller: widget.controller,
-                              ctx: context,
+              : EasyRefresh(
+                  onRefresh: () async {
+                    await widget.controller.getPreviosLicensesRequest();
+                  },
+                  onLoad: () async {
+                    if (widget.controller.prevRequest.value.next != null) {
+                      var nextLink =
+                          widget.controller.prevRequest.value.next as String;
+                      var offsetAndLimit = nextLink.split("?")[1].split("&");
+                      Map<String, String> queryParams = {};
+
+                      for (String param in offsetAndLimit) {
+                        List<String> keyValue = param.split("=");
+                        if (keyValue.length == 2) {
+                          queryParams[keyValue[0]] = keyValue[1];
+                        }
+                      }
+                      debugPrint(queryParams.toString());
+                      await widget.controller.getPreviosLicensesRequest(
+                          offset: int.parse(queryParams['offset'] ?? "0") + 10);
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: ListView(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ...List.generate(
+                              widget.controller.prevRequest.value.results
+                                      ?.length ??
+                                  0,
+                              (index) => TabItem(
+                                item: widget.controller.prevRequest.value
+                                    .results![index],
+                                controller: widget.controller,
+                                ctx: context,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 20),
-                        ],
-                      ),
-                    ],
+                            const SizedBox(height: 20),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 )),
     );

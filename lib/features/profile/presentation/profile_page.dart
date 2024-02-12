@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:rakshly/core/models/user.dart';
 import 'package:rakshly/core/services/auth/I_auth_service.dart';
+import 'package:rakshly/core/services/http_service.dart';
 import 'package:rakshly/features/auth/presentation/sign_in_screen.dart';
 import 'package:rakshly/features/home/presentation/home.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -256,36 +257,39 @@ class ProfilePage extends GetView<ProfileController> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: MaterialButton(
-                  onPressed: () async {
-                    if (controller.form.valid) {
-                    } else {
-                      debugPrint("Error");
-                    }
-                  },
-                  height: 50,
-                  // margin: EdgeInsets.symmetric(horizontal: 50),
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    side: const BorderSide(color: Colors.red),
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  // decoration: BoxDecoration(
-                  // ),
-                  child: Center(
-                    child: Text(
-                      "Delete Account".tr,
-                      style: TextStyle(
-                          color: Colors.red, fontWeight: FontWeight.bold),
+            Obx(
+              () => controller.isDeleteUser.value
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: MaterialButton(
+                          onPressed: () async {
+                            await controller.deleteAccount();
+                          },
+                          height: 50,
+                          // margin: EdgeInsets.symmetric(horizontal: 50),
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            side: const BorderSide(color: Colors.red),
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+
+                          child: Center(
+                            child: Text(
+                              "Delete Account".tr,
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-            ),
+            )
           ],
         ),
       ),
@@ -298,6 +302,7 @@ class ProfileController extends GetxController {
   late UserInfo? user;
 
   Rx<bool> isBusy = false.obs;
+  Rx<bool> isDeleteUser = false.obs;
 
   ProfileController() : authService = Get.find<AuthService>() {
     user = authService.user?.user;
@@ -345,5 +350,24 @@ class ProfileController extends GetxController {
       isBusy.value = false;
       Get.off(const Home());
     });
+  }
+
+  deleteAccount() async {
+    final api = Get.find<HttpService>();
+    final res = await api.deleteUser(user?.id);
+
+    if (res.statusCode == 204) {
+      await AwesomeDialog(
+              context: Get.context!,
+              dialogType: DialogType.success,
+              desc: "Account deleted successfully")
+          .show();
+    } else {
+      await AwesomeDialog(
+              context: Get.context!,
+              dialogType: DialogType.error,
+              desc: "Error".tr)
+          .show();
+    }
   }
 }

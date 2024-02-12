@@ -24,14 +24,20 @@ class HttpService extends GetConnect {
 
   Future<Response> forgetPassword(body) => post('/auth/password/reset/', body);
 
+  Future<Response> changePassword(body) => post('/auth/password/change/', body);
+
+  Future<Response> deleteUser(id) => delete('/api/v1/users/$id/');
+
   Future<Response> saveForm(body) => post("/api/v1/car-license/", body);
   Future<Response> saveDriverForm(body) =>
       post("/api/v1/driver-license/", body);
 
   Future<Response> getGovernmentsLicenseUnits() => get("/api/v1/governorates/");
 
-  getPreviosDrivingLicensesRequest() => get('/api/v1/driver-license');
-  getPreviosCarLicensesRequest() => get('/api/v1/car-license');
+  getPreviosDrivingLicensesRequest({offset}) =>
+      get('/api/v1/driver-license/?limit=$offset&offset=0');
+  getPreviosCarLicensesRequest({offset}) =>
+      get('/api/v1/car-license/?limit=$offset&offset=0');
 
   rating(body) => post('/api/v1/ratings/', body);
   updateCarLicenseRequest(int id, Map body) =>

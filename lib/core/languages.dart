@@ -63,7 +63,8 @@ class Languages extends Translations {
           "Sign Up": "إنشاء الحساب",
           "Retry": "أعد المحاولة",
           "Rating is done": "تم التقييم بنحاح",
-          "Error in rating": "خطأ في التقييم"
+          "Error in rating": "خطأ في التقييم",
+          "VIP": "خدمة مميزة"
         },
       };
 }

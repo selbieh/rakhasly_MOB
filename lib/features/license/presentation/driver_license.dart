@@ -190,6 +190,18 @@ class DriverLicensePage extends GetView<DriverLicenseController> {
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: FormItem(
                                   controller: controller,
+                                  child: ReactiveCheckboxListTile(
+                                    checkColor: Colors.white,
+                                    activeColor: Colors.blue,
+                                    title: Text('VIP'.tr),
+                                    formControlName: 'vip',
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: FormItem(
+                                  controller: controller,
                                   child: CustomReactiveImagePicker(
                                     formControlName: 'nationalIdImage',
                                     label: 'National ID'.tr,
